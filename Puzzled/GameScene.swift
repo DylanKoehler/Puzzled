@@ -12,7 +12,7 @@ class GameScene: SKScene {
     var arrow = SKSpriteNode()
     var bricks = [SKSpriteNode]()
     var removedBricks = 0
-
+    
     
     //functions and things
     override func didMove(to view: SKView) {
@@ -44,26 +44,28 @@ class GameScene: SKScene {
             if brick.parent != nil {
                 brick.removeFromParent()
             }
-    
-    func createBackground() {
-        for i in 0...1 {
-            let sunset = SKTexture(imageNamed: "Sunset")
-            let sunsetBackground = SKSpriteNode(texture: sunset)
-            sunsetBackground.zPosition = -1
-            sunsetBackground.position = CGPoint(x: 0, y: sunsetBackground.size.height * CGFloat(i))
-            addChild(sunsetBackground)
+            
+            func createBackground() {
+                for i in 0...1 {
+                    let sunset = SKTexture(imageNamed: "Sunset")
+                    let sunsetBackground = SKSpriteNode(texture: sunset)
+                    sunsetBackground.zPosition = -1
+                    sunsetBackground.position = CGPoint(x: 0, y: sunsetBackground.size.height * CGFloat(i))
+                    addChild(sunsetBackground)
+                }
+                bricks.removeAll()  // clear the array
+                removedBricks = 0   // reset the counter
+                
+            }
+            // helper function used to make each brick
+            func makeBrick(x: Int, y: Int, color: UIColor) {
+                let brick = SKSpriteNode(color: color, size: CGSize(width: 50, height: 20))
+                brick.position = CGPoint(x: x, y: y)
+                brick.physicsBody = SKPhysicsBody(rectangleOf: brick.size)
+                brick.physicsBody?.isDynamic = false
+                addChild(brick)
+                bricks.append(brick)
+            }
         }
-        bricks.removeAll()  // clear the array
-        removedBricks = 0   // reset the counter
-        
-    }
-    // helper function used to make each brick
-    func makeBrick(x: Int, y: Int, color: UIColor) {
-        let brick = SKSpriteNode(color: color, size: CGSize(width: 50, height: 20))
-        brick.position = CGPoint(x: x, y: y)
-        brick.physicsBody = SKPhysicsBody(rectangleOf: brick.size)
-        brick.physicsBody?.isDynamic = false
-        addChild(brick)
-        bricks.append(brick)
     }
 }
