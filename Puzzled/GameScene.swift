@@ -2,7 +2,7 @@
 //  GameScene.swift
 //  Puzzled
 //
-//  Created by Student on 3/29/22.
+//  Created by Dylan, Alistair, and Peter on 3/29/22.
 //
 
 import SpriteKit
