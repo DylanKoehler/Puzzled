@@ -17,11 +17,11 @@ class GameScene: SKScene {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-
+        
     }
-
+    
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-
+        
     }
     func resetGame() {
         makeArrow()
@@ -34,5 +34,15 @@ class GameScene: SKScene {
         arrow.physicsBody = SKPhysicsBody(rectangleOf: arrow.size)
         arrow.physicsBody?.isDynamic = false
         addChild(arrow)
+    }
+    
+    func createBackground() {
+        for i in 0...1 {
+            let sunset = SKTexture(imageNamed: "Sunset")
+            let sunsetBackground = SKSpriteNode(texture: sunset)
+            sunsetBackground.zPosition = -1
+            sunsetBackground.position = CGPoint(x: 0, y: sunsetBackground.size.height * CGFloat(i))
+            addChild(sunsetBackground)
+        }
     }
 }
