@@ -20,13 +20,15 @@ class GameScene: SKScene {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-
-    }
-
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-
+        
     }
     
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+    }
+    func resetGame() {
+        makeArrow()
+    }
     func makeArrow() {
         arrow.removeFromParent() //remove arrow if exists
         arrow = SKSpriteNode(color: .red, size: CGSize(width: 200, height: 20))
@@ -42,6 +44,14 @@ class GameScene: SKScene {
             if brick.parent != nil {
                 brick.removeFromParent()
             }
+    
+    func createBackground() {
+        for i in 0...1 {
+            let sunset = SKTexture(imageNamed: "Sunset")
+            let sunsetBackground = SKSpriteNode(texture: sunset)
+            sunsetBackground.zPosition = -1
+            sunsetBackground.position = CGPoint(x: 0, y: sunsetBackground.size.height * CGFloat(i))
+            addChild(sunsetBackground)
         }
         bricks.removeAll()  // clear the array
         removedBricks = 0   // reset the counter
