@@ -23,7 +23,9 @@ class GameScene: SKScene {
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
 
     }
-    
+    func resetGame() {
+        makeArrow()
+    }
     func makeArrow() {
         arrow.removeFromParent() //remove arrow if exists
         arrow = SKSpriteNode(color: .red, size: CGSize(width: 200, height: 20))
