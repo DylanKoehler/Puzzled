@@ -10,35 +10,55 @@ import GameplayKit
 class GameScene: SKScene {
     //variables and things
     var arrow = SKSpriteNode()
+    var target = SKShapeNode()
     var bricks = [SKSpriteNode]()
     var removedBricks = 0
     
     
     //functions and things
     override func didMove(to view: SKView) {
-        
+        //restarts game when app starts
+        resetGame()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
     }
-    
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         
     }
-    func resetGame() {
+    func resetGame() { //before game starts
         makeArrow()
+        makeTarget()
     }
     func makeArrow() {
         arrow.removeFromParent() //remove arrow if exists
         arrow = SKSpriteNode(color: .red, size: CGSize(width: 200, height: 20))
         arrow.position = CGPoint(x: frame.midX, y: frame.midY)
         arrow.name = "arrow"
+        
         arrow.physicsBody = SKPhysicsBody(rectangleOf: arrow.size)
         arrow.physicsBody?.isDynamic = false
+        arrow.physicsBody?.usesPreciseCollisionDetection = true
+        arrow.physicsBody?.friction = 0
+        arrow.physicsBody?.affectedByGravity = false
+        arrow.physicsBody?.restitution = 1
+        arrow.physicsBody?.linearDamping = 0
+        arrow.physicsBody?.contactTestBitMask = (arrow.physicsBody?.collisionBitMask)!
+        
         addChild(arrow)
     }
-    
+    func makeTarget() {
+        target.removeFromParent() //remove target if exists
+        target = SKShapeNode(circleOfRadius: 50)
+        target.position = CGPoint(x: frame.midX - 150, y: frame.midY + 100)
+        target.strokeColor = .black
+        target.fillColor = .blue
+        target.name = "target"
+        target.physicsBody = SKPhysicsBody(circleOfRadius: 50)
+        target.physicsBody?.isDynamic = false
+        addChild(target)
+    }
     func createBackground() {
         for i in 0...1 { //creates background
             let sunset = SKTexture(imageNamed: "Sunset")
