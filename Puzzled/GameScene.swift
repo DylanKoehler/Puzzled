@@ -11,8 +11,7 @@ class GameScene: SKScene {
     //variables and things
     var arrow = SKSpriteNode()
     var target = SKShapeNode()
-    var bricks = [SKSpriteNode]()
-    var removedBricks = 0
+    var brick = SKSpriteNode()
     
     
     //functions and things
@@ -30,6 +29,8 @@ class GameScene: SKScene {
     func resetGame() {
         makeArrow()
         makeTarget()
+        makeBrick(x: 100, y: 100, color: .black)
+
     }
     func makeArrow() {
         arrow.removeFromParent() //remove arrow if exists
@@ -57,18 +58,17 @@ class GameScene: SKScene {
             sunsetBackground.position = CGPoint(x: 0, y: sunsetBackground.size.height * CGFloat(i))
             addChild(sunsetBackground)
         }
-        bricks.removeAll()  // clear the array
-        removedBricks = 0   // reset the counter
+        
         
     }
     // helper function used to make each brick
     func makeBrick(x: Int, y: Int, color: UIColor) {
-        let brick = SKSpriteNode(color: color, size: CGSize(width: 25, height: 25))
+        let brick = SKSpriteNode(color: .black, size: CGSize(width: 100, height: 100))
         brick.position = CGPoint(x: x, y: y)
+        brick.name = "Brick"
         brick.physicsBody = SKPhysicsBody(rectangleOf: brick.size)
         brick.physicsBody?.isDynamic = false
         addChild(brick)
-        bricks.append(brick)
     }
 }
 
