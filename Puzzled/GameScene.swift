@@ -22,12 +22,12 @@ class GameScene: SKScene {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
     }
-    
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         
     }
-    func resetGame() {
+    func resetGame() { //before game starts
         makeArrow()
         makeTarget()
     }
@@ -36,8 +36,16 @@ class GameScene: SKScene {
         arrow = SKSpriteNode(color: .red, size: CGSize(width: 200, height: 20))
         arrow.position = CGPoint(x: frame.midX, y: frame.midY)
         arrow.name = "arrow"
+        
         arrow.physicsBody = SKPhysicsBody(rectangleOf: arrow.size)
         arrow.physicsBody?.isDynamic = false
+        arrow.physicsBody?.usesPreciseCollisionDetection = true
+        arrow.physicsBody?.friction = 0
+        arrow.physicsBody?.affectedByGravity = false
+        arrow.physicsBody?.restitution = 1
+        arrow.physicsBody?.linearDamping = 0
+        arrow.physicsBody?.contactTestBitMask = (arrow.physicsBody?.collisionBitMask)!
+        
         addChild(arrow)
     }
     func makeTarget() {
@@ -47,6 +55,8 @@ class GameScene: SKScene {
         target.strokeColor = .black
         target.fillColor = .blue
         target.name = "target"
+        target.physicsBody = SKPhysicsBody(circleOfRadius: 50)
+        target.physicsBody?.isDynamic = false
         addChild(target)
     }
     func createBackground() {
