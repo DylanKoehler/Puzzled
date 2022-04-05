@@ -7,7 +7,7 @@
 
 import SpriteKit
 import GameplayKit
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
     //variables and things
     var arrow = SKSpriteNode()
     var target = SKShapeNode()
@@ -19,6 +19,7 @@ class GameScene: SKScene {
     override func didMove(to view: SKView) {
         //restarts game when app starts
         resetGame()
+        shootArrow()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -47,6 +48,10 @@ class GameScene: SKScene {
         arrow.physicsBody?.contactTestBitMask = (arrow.physicsBody?.collisionBitMask)!
         
         addChild(arrow)
+    }
+    func shootArrow() {
+        arrow.physicsBody?.isDynamic = false
+        arrow.physicsBody?.applyImpulse(CGVector(dx: 3, dy: 0))
     }
     func makeTarget() {
         target.removeFromParent() //remove target if exists
