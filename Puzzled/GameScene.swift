@@ -17,11 +17,11 @@ class GameScene: SKScene {
     
     //functions and things
     override func didMove(to view: SKView) {
-        
+        //restarts game when app starts
+        resetGame()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
