@@ -18,6 +18,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //functions and things
     override func didMove(to view: SKView) {
         //restarts game when app starts
+        createBackground()
         resetGame()
         shootArrow()
     }
@@ -50,7 +51,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(arrow)
     }
     func shootArrow() {
-        arrow.physicsBody?.isDynamic = false
+        arrow.physicsBody?.isDynamic = true
         arrow.physicsBody?.applyImpulse(CGVector(dx: 3, dy: 0))
     }
     func makeTarget() {
