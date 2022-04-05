@@ -10,6 +10,7 @@ import GameplayKit
 class GameScene: SKScene {
     //variables and things
     var arrow = SKSpriteNode()
+    var target = SKShapeNode()
     var bricks = [SKSpriteNode]()
     var removedBricks = 0
     
@@ -28,6 +29,7 @@ class GameScene: SKScene {
     }
     func resetGame() {
         makeArrow()
+        makeTarget()
     }
     func makeArrow() {
         arrow.removeFromParent() //remove arrow if exists
@@ -38,7 +40,15 @@ class GameScene: SKScene {
         arrow.physicsBody?.isDynamic = false
         addChild(arrow)
     }
-    
+    func makeTarget() {
+        target.removeFromParent() //remove target if exists
+        target = SKShapeNode(circleOfRadius: 50)
+        target.position = CGPoint(x: frame.midX - 150, y: frame.midY + 100)
+        target.strokeColor = .black
+        target.fillColor = .blue
+        target.name = "target"
+        addChild(target)
+    }
     func createBackground() {
         for i in 0...1 {
             let sunset = SKTexture(imageNamed: "Sunset")
