@@ -40,7 +40,7 @@ class GameScene: SKScene {
     }
     
     func createBackground() {
-        for i in 0...1 {
+        for i in 0...1 { //creates background
             let sunset = SKTexture(imageNamed: "Sunset")
             let sunsetBackground = SKSpriteNode(texture: sunset)
             sunsetBackground.zPosition = -1
