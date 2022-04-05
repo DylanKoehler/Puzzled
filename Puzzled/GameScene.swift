@@ -10,6 +10,9 @@ import GameplayKit
 class GameScene: SKScene {
     //variables and things
     var arrow = SKSpriteNode()
+    var bricks = [SKSpriteNode]()
+    var removedBricks = 0
+    
     
     //functions and things
     override func didMove(to view: SKView) {
@@ -23,7 +26,9 @@ class GameScene: SKScene {
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         
     }
-    
+    func resetGame() {
+        makeArrow()
+    }
     func makeArrow() {
         arrow.removeFromParent() //remove arrow if exists
         arrow = SKSpriteNode(color: .red, size: CGSize(width: 200, height: 20))
@@ -42,5 +47,19 @@ class GameScene: SKScene {
             sunsetBackground.position = CGPoint(x: 0, y: sunsetBackground.size.height * CGFloat(i))
             addChild(sunsetBackground)
         }
+        bricks.removeAll()  // clear the array
+        removedBricks = 0   // reset the counter
+        
+    }
+    // helper function used to make each brick
+    func makeBrick(x: Int, y: Int, color: UIColor) {
+        let brick = SKSpriteNode(color: color, size: CGSize(width: 25, height: 25))
+        brick.position = CGPoint(x: x, y: y)
+        brick.physicsBody = SKPhysicsBody(rectangleOf: brick.size)
+        brick.physicsBody?.isDynamic = false
+        addChild(brick)
+        bricks.append(brick)
     }
 }
+
+
