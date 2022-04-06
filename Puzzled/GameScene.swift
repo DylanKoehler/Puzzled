@@ -26,13 +26,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
     }
+    
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         
     }
+    
     func resetGame() { //before game starts
         makeArrow()
         makeTarget()
     }
+    
     func makeArrow() {
         arrow.removeFromParent() //remove arrow if exists
         arrow = SKSpriteNode(color: .red, size: CGSize(width: 200, height: 20))
@@ -50,10 +53,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         addChild(arrow)
     }
+    
     func shootArrow() {
         arrow.physicsBody?.isDynamic = true
         arrow.physicsBody?.applyImpulse(CGVector(dx: 3, dy: 0))
     }
+    
     func makeTarget() {
         target.removeFromParent() //remove target if exists
         target = SKShapeNode(circleOfRadius: 50)
@@ -65,6 +70,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         target.physicsBody?.isDynamic = false
         addChild(target)
     }
+    
     func createBackground() {
         for i in 0...1 { //creates background
             let sunset = SKTexture(imageNamed: "Sunset")
@@ -77,6 +83,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         removedBricks = 0   // reset the counter
         
     }
+    
     // helper function used to make each brick
     func makeBrick(x: Int, y: Int, color: UIColor) {
         let brick = SKSpriteNode(color: color, size: CGSize(width: 25, height: 25))
@@ -85,6 +92,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         brick.physicsBody?.isDynamic = false
         addChild(brick)
         bricks.append(brick)
+    }
+    
+    func makeBouncyBrick(x: Int, y: Int, color: UIColor) {
+        let bouncybrick = SKSpriteNode(color: color, size: CGSize(width: 25, height: 25))
+        bouncybrick.position = CGPoint(x: x, y: y)
+        bouncybrick.physicsBody = SKPhysicsBody(rectangleOf: bouncybrick.size)
+        bouncybrick.physicsBody?.isDynamic = false
+        addChild(bouncybrick)
+        bricks.append(bouncybrick)
     }
 }
 
