@@ -10,12 +10,13 @@ import GameplayKit
 class GameScene: SKScene, SKPhysicsContactDelegate {
     //variables and things
     var arrow = SKSpriteNode()
-    var target = SKShapeNode()
+    var target = SKSpriteNode()
     var brick = SKSpriteNode()
-    
     
     //functions and things
     override func didMove(to view: SKView) {
+        physicsWorld.contactDelegate = self
+        self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         //restarts game when app starts
         createBackground()
         resetGame()
@@ -31,50 +32,62 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func resetGame() { //before game starts
-        makeArrow()
-        makeTarget()
+        makeArrow(y: -1)
+        makeTarget(y: -1)
         makeBrick(x: 100, y: 100, color: .black)
-
     }
-    
-    func makeArrow() {
+    func didBegin(_ contact: SKPhysicsContact) {
+        if contact.bodyA.node?.name == "arrow" {
+                collisionBetween(arrow: contact.bodyA.node!, object: contact.bodyB.node!)
+            } else if contact.bodyB.node?.name == "arrow" {
+                collisionBetween(arrow: contact.bodyB.node!, object: contact.bodyA.node!)
+            }
+    }
+    func collisionBetween(arrow: SKNode, object: SKNode){
+        //what happens when arrow hits target
+        if object.name == "target" {
+            print("Win")
+            arrow.physicsBody?.isDynamic = false
+        }
+    }
+    func makeArrow(y: Int /* Changes the starting y position for 3 diff options */) {
         arrow.removeFromParent() //remove arrow if exists
-        arrow = SKSpriteNode(color: .red, size: CGSize(width: 200, height: 20))
-        arrow.position = CGPoint(x: frame.midX, y: frame.midY)
+        arrow = SKSpriteNode(color: .red, size: CGSize(width: 75, height: 10))
+        arrow.position = CGPoint(x: frame.minX + 50, y: frame.midY + CGFloat((200 * y)))
         arrow.name = "arrow"
         
+        target.physicsBody?.usesPreciseCollisionDetection = true
         arrow.physicsBody = SKPhysicsBody(rectangleOf: arrow.size)
+        arrow.physicsBody!.contactTestBitMask = arrow.physicsBody!.collisionBitMask
         arrow.physicsBody?.isDynamic = false
-        arrow.physicsBody?.usesPreciseCollisionDetection = true
         arrow.physicsBody?.friction = 0
         arrow.physicsBody?.affectedByGravity = false
         arrow.physicsBody?.restitution = 1
         arrow.physicsBody?.linearDamping = 0
-        arrow.physicsBody?.contactTestBitMask = (arrow.physicsBody?.collisionBitMask)!
         
         addChild(arrow)
     }
     
     func shootArrow() {
         arrow.physicsBody?.isDynamic = true
-        arrow.physicsBody?.applyImpulse(CGVector(dx: 3, dy: 0))
+        arrow.physicsBody?.applyImpulse(CGVector(dx: 15, dy: 0))
     }
-    
-    func makeTarget() {
+    func makeTarget(y : Int) {
         target.removeFromParent() //remove target if exists
-        target = SKShapeNode(circleOfRadius: 50)
-        target.position = CGPoint(x: frame.midX - 150, y: frame.midY + 100)
-        target.strokeColor = .black
-        target.fillColor = .blue
+        target = SKSpriteNode(color: .blue, size: CGSize(width: 75, height: 75))
+        target.physicsBody = SKPhysicsBody(rectangleOf: target.size)
+        target.position = CGPoint(x: frame.maxX - 50, y: frame.midY + CGFloat((200 * y)))
         target.name = "target"
-        target.physicsBody = SKPhysicsBody(circleOfRadius: 50)
         target.physicsBody?.isDynamic = false
+        target.physicsBody?.usesPreciseCollisionDetection = true
+        target.physicsBody?.contactTestBitMask = (target.physicsBody?.collisionBitMask)!
+        
         addChild(target)
     }
     
     func createBackground() {
-        for i in 0...1 { //creates background
-            let sunset = SKTexture(imageNamed: "Sunset")
+        for i in 0...1 {
+            let sunset = SKTexture(imageNamed: "sunset")
             let sunsetBackground = SKSpriteNode(texture: sunset)
             sunsetBackground.zPosition = -1
             sunsetBackground.position = CGPoint(x: 0, y: sunsetBackground.size.height * CGFloat(i))
