@@ -38,10 +38,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     func didBegin(_ contact: SKPhysicsContact) {
         if contact.bodyA.node?.name == "arrow" {
-                collisionBetween(arrow: contact.bodyA.node!, object: contact.bodyB.node!)
-            } else if contact.bodyB.node?.name == "arrow" {
-                collisionBetween(arrow: contact.bodyB.node!, object: contact.bodyA.node!)
-            }
+            collisionBetween(arrow: contact.bodyA.node!, object: contact.bodyB.node!)
+        } else if contact.bodyB.node?.name == "arrow" {
+            collisionBetween(arrow: contact.bodyB.node!, object: contact.bodyA.node!)
+        }
     }
     func collisionBetween(arrow: SKNode, object: SKNode){
         //what happens when arrow hits target
@@ -74,7 +74,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     func makeTarget(y : Int) {
         target.removeFromParent() //remove target if exists
-        target = SKSpriteNode(color: .blue, size: CGSize(width: 75, height: 75))
+        target = SKSpriteNode(imageNamed: "target")
         target.physicsBody = SKPhysicsBody(rectangleOf: target.size)
         target.position = CGPoint(x: frame.maxX - 50, y: frame.midY + CGFloat((200 * y)))
         target.name = "target"
@@ -113,7 +113,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bouncybrick.physicsBody = SKPhysicsBody(rectangleOf: bouncybrick.size)
         bouncybrick.physicsBody?.isDynamic = false
         addChild(bouncybrick)
-        bricks.append(bouncybrick)
+        brick.append(bouncybrick)
     }
 }
 
