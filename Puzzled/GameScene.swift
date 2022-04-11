@@ -10,7 +10,7 @@ import GameplayKit
 class GameScene: SKScene, SKPhysicsContactDelegate {
     //variables and things
     var arrow = SKSpriteNode()
-    var target = SKShapeNode()
+    var target = SKSpriteNode()
     var brick = SKSpriteNode()
     
     //functions and things
@@ -32,6 +32,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func resetGame() { //before game starts
         makeArrow(y: -1)
         makeTarget(y: -1)
+        makeBrick(x: 100, y: 100, color: .black)
     }
     func didBegin(_ contact: SKPhysicsContact) {
         if contact.bodyA.node?.name == "arrow" {
