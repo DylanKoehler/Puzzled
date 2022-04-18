@@ -12,6 +12,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var arrow = SKSpriteNode()
     var target = SKSpriteNode()
     var brick = SKSpriteNode()
+    var bow = SKSpriteNode()
     
     //functions and things
     override func didMove(to view: SKView) {
@@ -32,6 +33,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func resetGame() { //before game starts
         makeArrow(y: -1)
         makeTarget(y: -1)
+        makeBow(y: -1)
         makeBrick(x: 100, y: 100, color: .black)
     }
     func didBegin(_ contact: SKPhysicsContact) {
@@ -54,7 +56,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         arrow.position = CGPoint(x: frame.minX + 50, y: frame.midY + CGFloat((200 * y)))
         arrow.name = "arrow"
         
-        target.physicsBody?.usesPreciseCollisionDetection = true
+        arrow.physicsBody?.usesPreciseCollisionDetection = true
         arrow.physicsBody = SKPhysicsBody(rectangleOf: arrow.size)
         arrow.physicsBody!.contactTestBitMask = arrow.physicsBody!.collisionBitMask
         arrow.physicsBody?.isDynamic = false
@@ -64,6 +66,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         arrow.physicsBody?.linearDamping = 0
         
         addChild(arrow)
+    }
+    func makeBow(y: Int){
+        bow.removeFromParent()
+        bow = SKSpriteNode(color: .yellow, size: CGSize(width: 75, height: 75))
+        bow.position = CGPoint(x: frame.minX + 50, y: frame.midY + CGFloat((200 * y)))
+        bow.name = "bow"
+        
+        bow.physicsBody?.isDynamic = false
+        bow.physicsBody = SKPhysicsBody(rectangleOf: bow.size)
+        bow.physicsBody?.categoryBitMask = 0
+        
+        addChild(bow)
     }
     func shootArrow() {
         arrow.physicsBody?.isDynamic = true
