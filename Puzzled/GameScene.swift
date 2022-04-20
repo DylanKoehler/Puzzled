@@ -126,7 +126,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bouncybrick.physicsBody = SKPhysicsBody(rectangleOf: bouncybrick.size)
         bouncybrick.physicsBody?.isDynamic = false
         addChild(bouncybrick)
-        brick.append(bouncybrick)
     }
 }
 
