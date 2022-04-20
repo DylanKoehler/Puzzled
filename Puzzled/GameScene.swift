@@ -12,6 +12,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var arrow = SKSpriteNode()
     var target = SKSpriteNode()
     var brick = SKSpriteNode()
+    var bouncyBrick = SKSpriteNode()
     var bow = SKSpriteNode()
     
     //functions and things
@@ -31,6 +32,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         makeTarget(y: -1)
         makeBow(y: -1)
         makeBrick(x: 100, y: 100, color: .black)
+        makeBouncyBrick(x: 50, y: 50, color: .blue)
     }
     func didBegin(_ contact: SKPhysicsContact) {
         if contact.bodyA.node?.name == "arrow" {
@@ -118,11 +120,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func makeBouncyBrick(x: Int, y: Int, color: UIColor) {
-        let bouncybrick = SKSpriteNode(color: color, size: CGSize(width: 25, height: 25))
-        bouncybrick.position = CGPoint(x: x, y: y)
-        bouncybrick.physicsBody = SKPhysicsBody(rectangleOf: bouncybrick.size)
-        bouncybrick.physicsBody?.isDynamic = false
-        addChild(bouncybrick)
+        bouncyBrick.removeFromParent()
+        bouncyBrick = SKSpriteNode(color: .blue, size: CGSize(width: 100, height: 20))
+        bouncyBrick.position = CGPoint(x: x, y: y)
+        bouncyBrick.name = "BouncyBrick"
+        bouncyBrick.physicsBody = SKPhysicsBody(rectangleOf: bouncyBrick.size)
+        bouncyBrick.physicsBody?.isDynamic = false
+        bouncyBrick.physicsBody?.affectedByGravity = false
+        addChild(bouncyBrick)
     }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
