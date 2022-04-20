@@ -23,9 +23,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         resetGame()
         shootArrow()
     }
-    
-    
-    
     func resetGame() { //before game starts
         makeArrow(y: -1)
         makeTarget(y: -1)
@@ -83,8 +80,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         target.removeFromParent() //remove target if exists
         let targetPicture = SKTexture(imageNamed: "target")
         target = SKSpriteNode(texture: targetPicture, size: CGSize(width: 75, height: 75))
-        target.physicsBody = SKPhysicsBody(rectangleOf: target.size)
+        target.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 1, height: 75))
         target.position = CGPoint(x: frame.maxX - 50, y: frame.midY + CGFloat((200 * y)))
+        target.zPosition = -1
         target.name = "target"
         target.physicsBody?.isDynamic = false
         target.physicsBody?.usesPreciseCollisionDetection = true
@@ -92,19 +90,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         addChild(target)
     }
-    
     func createBackground() {
         for i in 0...1 {
             let sunset = SKTexture(imageNamed: "sunset")
             let sunsetBackground = SKSpriteNode(texture: sunset)
-            sunsetBackground.zPosition = -1
+            sunsetBackground.zPosition = -2
             sunsetBackground.position = CGPoint(x: 0, y: sunsetBackground.size.height * CGFloat(i))
             addChild(sunsetBackground)
         }
-        
-        
     }
-    
     // helper function used to make each brick
     func makeBrick(x: Int, y: Int, color: UIColor) {
         brick.removeFromParent()
