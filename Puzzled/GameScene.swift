@@ -24,13 +24,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         shootArrow()
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-    }
     
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-    }
     
     func resetGame() { //before game starts
         makeArrow(y: -1)
@@ -113,11 +107,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     // helper function used to make each brick
     func makeBrick(x: Int, y: Int, color: UIColor) {
-        let brick = SKSpriteNode(color: .black, size: CGSize(width: 100, height: 100))
+        brick.removeFromParent()
+        brick = SKSpriteNode(color: .black, size: CGSize(width: 100, height: 100))
         brick.position = CGPoint(x: x, y: y)
         brick.name = "Brick"
         brick.physicsBody = SKPhysicsBody(rectangleOf: brick.size)
         brick.physicsBody?.isDynamic = false
+        brick.physicsBody?.affectedByGravity = false
         addChild(brick)
     }
     
@@ -127,6 +123,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bouncybrick.physicsBody = SKPhysicsBody(rectangleOf: bouncybrick.size)
         bouncybrick.physicsBody?.isDynamic = false
         addChild(bouncybrick)
+    }
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch in touches {
+            let location = touch.location(in: self)
+            brick.position.x = location.x
+            brick.position.y = location.y
+        }
+    }
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch in touches {
+            let location = touch.location(in: self)
+            brick.position.x = location.x
+            brick.position.y = location.y
+        }
     }
 }
 
