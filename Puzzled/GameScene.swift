@@ -87,7 +87,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     func makeTarget(y : Int) {
         target.removeFromParent() //remove target if exists
-        target = SKSpriteNode(imageNamed: "target")
+        let targetPicture = SKTexture(imageNamed: "target")
+        target = SKSpriteNode(texture: targetPicture, size: CGSize(width: 75, height: 75))
         target.physicsBody = SKPhysicsBody(rectangleOf: target.size)
         target.position = CGPoint(x: frame.maxX - 50, y: frame.midY + CGFloat((200 * y)))
         target.name = "target"
@@ -126,7 +127,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bouncybrick.physicsBody = SKPhysicsBody(rectangleOf: bouncybrick.size)
         bouncybrick.physicsBody?.isDynamic = false
         addChild(bouncybrick)
-        brick.append(bouncybrick)
     }
 }
 
