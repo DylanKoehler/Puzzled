@@ -62,9 +62,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     func makeBow(y: Int){
         bow.removeFromParent()
-        bow = SKSpriteNode(color: .blue, size: CGSize(width: 75, height: 75))
+        let bowPicture = SKTexture(imageNamed: "bow")
+        bow = SKSpriteNode(texture: bowPicture, size: CGSize(width: 75, height: 75))
         bow.physicsBody = SKPhysicsBody(rectangleOf: bow.size)
         bow.position = CGPoint(x: frame.minX + 50, y: frame.midY + CGFloat((200 * y)))
+        bow.zRotation = -.pi/9
         bow.name = "bow"
         
         bow.physicsBody?.isDynamic = false
