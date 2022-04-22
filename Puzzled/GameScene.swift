@@ -134,6 +134,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let location = touch.location(in: self)
             brick.position.x = location.x
             brick.position.y = location.y
+            bouncyBrick.position.x = location.x
+            bouncyBrick.position.y = location.y
         }
     }
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -141,6 +143,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let location = touch.location(in: self)
             brick.position.x = location.x
             brick.position.y = location.y
+            bouncyBrick.position.x = location.x
+            bouncyBrick.position.y = location.y
         }
     }
 }
