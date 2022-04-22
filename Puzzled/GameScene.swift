@@ -13,6 +13,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var target = SKSpriteNode()
     var brick = SKSpriteNode()
     var bow = SKSpriteNode()
+    var arrowShot = false
     
     //functions and things
     override func didMove(to view: SKView) {
@@ -21,7 +22,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //restarts game when app starts
         createBackground()
         resetGame()
-        shootArrow()
     }
     func resetGame() { //before game starts
         makeArrow(y: -1)
@@ -62,13 +62,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     func makeBow(y: Int){
         bow.removeFromParent()
-        bow = SKSpriteNode(color: .yellow, size: CGSize(width: 75, height: 75))
+        bow = SKSpriteNode(color: .blue, size: CGSize(width: 75, height: 75))
+        bow.physicsBody = SKPhysicsBody(rectangleOf: bow.size)
         bow.position = CGPoint(x: frame.minX + 50, y: frame.midY + CGFloat((200 * y)))
         bow.name = "bow"
         
         bow.physicsBody?.isDynamic = false
-        bow.physicsBody = SKPhysicsBody(rectangleOf: bow.size)
+        //makes it so arrow doesnt interact with the bow
         bow.physicsBody?.categoryBitMask = 0
+        //makes it so the bow is always under the arrow
+        bow.zPosition = -1
         
         addChild(bow)
     }
@@ -121,15 +124,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
             let location = touch.location(in: self)
-            brick.position.x = location.x
-            brick.position.y = location.y
+            for node in nodes(at: location) {
+                if arrowShot {
+                    if node.name == "Brick" {
+                        brick.position.x = location.x
+                        brick.position.y = location.y
+                    }
+                } else {
+                    if node.name == "bow" {
+                        shootArrow()
+                        arrowShot = true
+                    }
+                }
+            }
         }
     }
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
             let location = touch.location(in: self)
-            brick.position.x = location.x
-            brick.position.y = location.y
+            for node in nodes(at: location) {
+                if arrowShot {
+                    if node.name == "Brick" {
+                        brick.position.x = location.x
+                        brick.position.y = location.y
+                    }
+                }
+            }
         }
     }
 }
