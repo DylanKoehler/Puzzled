@@ -41,8 +41,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func collisionBetween(arrow: SKNode, object: SKNode){
         //what happens when arrow hits target
         if object.name == "target" {
-            print("Win")
             arrow.physicsBody?.isDynamic = false
+            print("Win")
+        }
+        if object.name == "brick" {
+            arrow.physicsBody?.isDynamic = false
+            print("Lose")
         }
     }
     func makeArrow(y: Int /* Changes the starting y position for 3 diff options */) {
@@ -111,7 +115,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         brick.removeFromParent()
         brick = SKSpriteNode(color: .black, size: CGSize(width: 100, height: 100))
         brick.position = CGPoint(x: x, y: y)
-        brick.name = "Brick"
+        brick.name = "brick"
         brick.physicsBody = SKPhysicsBody(rectangleOf: brick.size)
         brick.physicsBody?.isDynamic = false
         brick.physicsBody?.affectedByGravity = false
@@ -132,12 +136,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for touch in touches {
             let location = touch.location(in: self)
             for node in nodes(at: location) {
-                if arrowShot {
-                    if node.name == "Brick" {
+                if !arrowShot {
+                    if node.name == "brick" {
                         brick.position.x = location.x
                         brick.position.y = location.y
                     }
-                } else {
                     if node.name == "bow" {
                         shootArrow()
                         arrowShot = true
@@ -150,8 +153,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for touch in touches {
             let location = touch.location(in: self)
             for node in nodes(at: location) {
-                if arrowShot {
-                    if node.name == "Brick" {
+                if !arrowShot {
+                    if node.name == "brick" {
                         brick.position.x = location.x
                         brick.position.y = location.y
                     }
