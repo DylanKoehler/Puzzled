@@ -13,6 +13,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var target = SKSpriteNode()
     var brick = SKSpriteNode()
     var bow = SKSpriteNode()
+    var arrowShot = false
     
     //functions and things
     override func didMove(to view: SKView) {
@@ -21,11 +22,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //restarts game when app starts
         createBackground()
         resetGame()
-        shootArrow()
     }
-    
-    
-    
     func resetGame() { //before game starts
         makeArrow(y: -1)
         makeTarget(y: -1)
@@ -65,13 +62,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     func makeBow(y: Int){
         bow.removeFromParent()
-        bow = SKSpriteNode(color: .yellow, size: CGSize(width: 75, height: 75))
+        let bowPicture = SKTexture(imageNamed: "bow")
+        bow = SKSpriteNode(texture: bowPicture, size: CGSize(width: 75, height: 75))
+        bow.physicsBody = SKPhysicsBody(rectangleOf: bow.size)
         bow.position = CGPoint(x: frame.minX + 50, y: frame.midY + CGFloat((200 * y)))
+        bow.zRotation = -.pi/9
         bow.name = "bow"
         
         bow.physicsBody?.isDynamic = false
-        bow.physicsBody = SKPhysicsBody(rectangleOf: bow.size)
+        //makes it so arrow doesnt interact with the bow
         bow.physicsBody?.categoryBitMask = 0
+        //makes it so the bow is always under the arrow
+        bow.zPosition = -1
         
         addChild(bow)
     }
@@ -83,8 +85,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         target.removeFromParent() //remove target if exists
         let targetPicture = SKTexture(imageNamed: "target")
         target = SKSpriteNode(texture: targetPicture, size: CGSize(width: 75, height: 75))
-        target.physicsBody = SKPhysicsBody(rectangleOf: target.size)
+        target.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 1, height: 75))
         target.position = CGPoint(x: frame.maxX - 50, y: frame.midY + CGFloat((200 * y)))
+        target.zPosition = -1
         target.name = "target"
         target.physicsBody?.isDynamic = false
         target.physicsBody?.usesPreciseCollisionDetection = true
@@ -92,19 +95,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         addChild(target)
     }
-    
     func createBackground() {
         for i in 0...1 {
             let sunset = SKTexture(imageNamed: "sunset")
             let sunsetBackground = SKSpriteNode(texture: sunset)
-            sunsetBackground.zPosition = -1
+            sunsetBackground.zPosition = -2
             sunsetBackground.position = CGPoint(x: 0, y: sunsetBackground.size.height * CGFloat(i))
             addChild(sunsetBackground)
         }
-        
-        
     }
-    
     // helper function used to make each brick
     func makeBrick(x: Int, y: Int, color: UIColor) {
         brick.removeFromParent()
@@ -127,15 +126,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
             let location = touch.location(in: self)
-            brick.position.x = location.x
-            brick.position.y = location.y
+            for node in nodes(at: location) {
+                if arrowShot {
+                    if node.name == "Brick" {
+                        brick.position.x = location.x
+                        brick.position.y = location.y
+                    }
+                } else {
+                    if node.name == "bow" {
+                        shootArrow()
+                        arrowShot = true
+                    }
+                }
+            }
         }
     }
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
             let location = touch.location(in: self)
-            brick.position.x = location.x
-            brick.position.y = location.y
+            for node in nodes(at: location) {
+                if arrowShot {
+                    if node.name == "Brick" {
+                        brick.position.x = location.x
+                        brick.position.y = location.y
+                    }
+                }
+            }
         }
     }
 }
