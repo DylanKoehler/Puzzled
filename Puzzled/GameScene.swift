@@ -11,9 +11,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //variables and things
     var arrow = SKSpriteNode()
     var target = SKSpriteNode()
-    var brick = SKSpriteNode()
     var bouncyBrick = SKSpriteNode()
+    var bricks = [SKSpriteNode]()
     var bow = SKSpriteNode()
+    var currentBrick = SKSpriteNode()
     var arrowShot = false
     
     //functions and things
@@ -28,8 +29,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         makeArrow(y: -1)
         makeTarget(y: -1)
         makeBow(y: -1)
-        makeBrick(x: 100, y: 100, color: .black)
         makeBouncyBrick(x: 50, y: 50, color: .blue)
+        makeBrick(x: 100, y: 100, canMove: true)
+        makeBrick(x: 0, y: 100, canMove: true)
+        makeBrick(x: -100, y: 100, canMove: false)
     }
     func didBegin(_ contact: SKPhysicsContact) {
         if contact.bodyA.node?.name == "arrow" {
@@ -111,15 +114,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     // helper function used to make each brick
-    func makeBrick(x: Int, y: Int, color: UIColor) {
-        brick.removeFromParent()
-        brick = SKSpriteNode(color: .black, size: CGSize(width: 100, height: 100))
+    func makeBrick(x: Int, y: Int, canMove: Bool) {
+        let brick = SKSpriteNode(color: canMove ? .red : .black, size: CGSize(width: 75, height: 75))
         brick.position = CGPoint(x: x, y: y)
-        brick.name = "brick"
         brick.physicsBody = SKPhysicsBody(rectangleOf: brick.size)
-        brick.physicsBody?.isDynamic = false
+        brick.physicsBody?.isDynamic = canMove ? true : false
         brick.physicsBody?.affectedByGravity = false
         addChild(brick)
+        bricks.append(brick)
     }
     
     func makeBouncyBrick(x: Int, y: Int, color: UIColor) {
@@ -136,15 +138,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for touch in touches {
             let location = touch.location(in: self)
             for node in nodes(at: location) {
-                if node.name == "brick" {
-                    brick.position.x = location.x
-                    brick.position.y = location.y
-                }
-                if node.name == "bouncyBrick" {
-                    bouncyBrick.position.x = location.x
-                    bouncyBrick.position.y = location.y
-                }
                 if !arrowShot {
+                    if node.name == "bouncyBrick" {
+                        bouncyBrick.position.x = location.x
+                        bouncyBrick.position.y = location.y
+                    }
+                    for brick in bricks {
+                        if node == brick {
+                            currentBrick = brick
+                            brick.position.x = location.x
+                            brick.position.y = location.y
+                        }
+                    }
                     if node.name == "bow" {
                         shootArrow()
                         arrowShot = true
@@ -158,20 +163,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for touch in touches {
             let location = touch.location(in: self)
             for node in nodes(at: location) {
-                if node.name == "brick" {
-                    brick.position.x = location.x
-                    brick.position.y = location.y
-                }
-                if node.name == "bouncyBrick" {
-                    bouncyBrick.position.x = location.x
-                    bouncyBrick.position.y = location.y
-                }
                 if !arrowShot {
-                    
+                    if node.name == "bouncyBrick" {
+                        bouncyBrick.position.x = location.x
+                        bouncyBrick.position.y = location.y
+                    }
+                    for brick in bricks {
+                        if currentBrick == brick {
+                            brick.position.x = location.x
+                            brick.position.y = location.y
+                        }
+                    }
                 }
-               
+                
             }
         }
+    }
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        currentBrick = target
     }
 }
 
