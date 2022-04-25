@@ -126,7 +126,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bouncyBrick.removeFromParent()
         bouncyBrick = SKSpriteNode(color: .blue, size: CGSize(width: 100, height: 20))
         bouncyBrick.position = CGPoint(x: x, y: y)
-        bouncyBrick.name = "BouncyBrick"
+        bouncyBrick.name = "bouncyBrick"
         bouncyBrick.physicsBody = SKPhysicsBody(rectangleOf: bouncyBrick.size)
         bouncyBrick.physicsBody?.isDynamic = false
         bouncyBrick.physicsBody?.affectedByGravity = false
@@ -136,14 +136,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for touch in touches {
             let location = touch.location(in: self)
             for node in nodes(at: location) {
+                if node.name == "brick" {
+                    brick.position.x = location.x
+                    brick.position.y = location.y
+                }
+                if node.name == "bouncyBrick" {
+                    bouncyBrick.position.x = location.x
+                    bouncyBrick.position.y = location.y
+                }
                 if !arrowShot {
-                    if node.name == "brick" {
-                        brick.position.x = location.x
-                        brick.position.y = location.y
-                    }
                     if node.name == "bow" {
                         shootArrow()
                         arrowShot = true
+                        
                     }
                 }
             }
@@ -153,12 +158,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for touch in touches {
             let location = touch.location(in: self)
             for node in nodes(at: location) {
-                if !arrowShot {
-                    if node.name == "brick" {
-                        brick.position.x = location.x
-                        brick.position.y = location.y
-                    }
+                if node.name == "brick" {
+                    brick.position.x = location.x
+                    brick.position.y = location.y
                 }
+                if node.name == "bouncyBrick" {
+                    bouncyBrick.position.x = location.x
+                    bouncyBrick.position.y = location.y
+                }
+                if !arrowShot {
+                    
+                }
+               
             }
         }
     }
