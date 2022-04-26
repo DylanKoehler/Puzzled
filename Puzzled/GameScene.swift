@@ -11,9 +11,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //variables and things
     var arrow = SKSpriteNode()
     var target = SKSpriteNode()
-    var bouncyBrick = SKSpriteNode()
+    var bouncyBricks = [SKSpriteNode]()
     var bricks = [SKSpriteNode]()
     var bow = SKSpriteNode()
+    //when moving brick fast it cant keep up so this variable fixes that
     var currentBrick = SKSpriteNode()
     var arrowShot = false
     
@@ -125,23 +126,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func makeBouncyBrick(x: Int, y: Int, color: UIColor) {
-        bouncyBrick.removeFromParent()
-        bouncyBrick = SKSpriteNode(color: .blue, size: CGSize(width: 100, height: 20))
+        let bouncyBrick = SKSpriteNode(color: .blue, size: CGSize(width: 100, height: 20))
         bouncyBrick.position = CGPoint(x: x, y: y)
-        bouncyBrick.name = "bouncyBrick"
         bouncyBrick.physicsBody = SKPhysicsBody(rectangleOf: bouncyBrick.size)
-        bouncyBrick.physicsBody?.isDynamic = false
+        bouncyBrick.physicsBody?.isDynamic = true
         bouncyBrick.physicsBody?.affectedByGravity = false
         addChild(bouncyBrick)
+        bouncyBricks.append(bouncyBrick)
     }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
             let location = touch.location(in: self)
             for node in nodes(at: location) {
                 if !arrowShot {
-                    if node.name == "bouncyBrick" {
-                        bouncyBrick.position.x = location.x
-                        bouncyBrick.position.y = location.y
+                    for brick in bouncyBricks {
+                        if node == brick {
+                            currentBrick = brick
+                            brick.position.x = location.x
+                            brick.position.y = location.y
+                        }
                     }
                     for brick in bricks {
                         if node == brick {
@@ -164,9 +167,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let location = touch.location(in: self)
             for node in nodes(at: location) {
                 if !arrowShot {
-                    if node.name == "bouncyBrick" {
-                        bouncyBrick.position.x = location.x
-                        bouncyBrick.position.y = location.y
+                    for brick in bouncyBricks {
+                        if currentBrick == brick {
+                            brick.position.x = location.x
+                            brick.position.y = location.y
+                        }
                     }
                     for brick in bricks {
                         if currentBrick == brick {
@@ -179,6 +184,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
+    //when you take finger off it changes current so next time you press it wont jump to the old current
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         currentBrick = target
     }
