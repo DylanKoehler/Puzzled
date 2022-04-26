@@ -16,6 +16,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var bow = SKSpriteNode()
     var currentBrick = SKSpriteNode() //when moving brick faster than touches moved can keep up, this variable fixes by storing last touched node
     var arrowShot = false
+    var currentLvl = 0
     
     //functions and things
     override func didMove(to view: SKView) {
@@ -23,16 +24,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         //restarts game when app starts
         createBackground()
-        resetGame()
-    }
-    func resetGame() { //before game starts
-        makeArrow(y: -1)
-        makeTarget(y: -1)
-        makeBow(y: -1)
-        makeBouncyBrick(x: 50, y: 50, color: .magenta)
-        makeBrick(x: 100, y: 100, canMove: true)
-        makeBrick(x: 0, y: 100, canMove: true)
-        makeBrick(x: -100, y: 100, canMove: false)
+        setLevel(level: 0)
     }
     func didBegin(_ contact: SKPhysicsContact) {
         if contact.bodyA.node?.name == "arrow" {
@@ -53,6 +45,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if object.name == "target" {
             arrow.physicsBody?.isDynamic = false
             print("Win")
+            nextLevel()
         }
         for brick in bouncyBricks {
             if object == brick {
@@ -196,6 +189,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //when you take finger off it changes current so next time you press it wont jump to the old current
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         currentBrick = target
+    }
+    func nextLevel(){
+        setLevel(level: currentLvl + 1)
+    }
+    func setLevel(level : Int){
+        currentLvl = level
+        switch currentLvl {
+        case 0: //for testing
+            makeArrow(y: -1)
+            makeTarget(y: -1)
+            makeBow(y: -1)
+            makeBouncyBrick(x: 50, y: 50, color: .magenta)
+            makeBrick(x: 100, y: 100, canMove: true)
+            makeBrick(x: 0, y: 100, canMove: true)
+            makeBrick(x: -100, y: 100, canMove: false)
+        case 1: //level 1
+            return
+        default:
+            return
+        }
     }
 }
 
