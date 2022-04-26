@@ -14,8 +14,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var bouncyBricks = [SKSpriteNode]()
     var bricks = [SKSpriteNode]()
     var bow = SKSpriteNode()
-    //when moving brick fast it cant keep up so this variable fixes that
-    var currentBrick = SKSpriteNode()
+    var currentBrick = SKSpriteNode() //when moving brick faster than touches moved can keep up, this variable fixes by storing last touched node
     var arrowShot = false
     
     //functions and things
@@ -30,7 +29,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         makeArrow(y: -1)
         makeTarget(y: -1)
         makeBow(y: -1)
-        makeBouncyBrick(x: 50, y: 50, color: .blue)
+        makeBouncyBrick(x: 50, y: 50, color: .magenta)
         makeBrick(x: 100, y: 100, canMove: true)
         makeBrick(x: 0, y: 100, canMove: true)
         makeBrick(x: -100, y: 100, canMove: false)
@@ -44,13 +43,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     func collisionBetween(arrow: SKNode, object: SKNode){
         //what happens when arrow hits target
+        for brick in bricks {
+            if object == brick {
+                arrow.physicsBody?.isDynamic = false
+                brick.physicsBody?.isDynamic = false
+                print("Lose")
+            }
+        }
         if object.name == "target" {
             arrow.physicsBody?.isDynamic = false
             print("Win")
         }
-        if object.name == "brick" {
-            arrow.physicsBody?.isDynamic = false
-            print("Lose")
+        for brick in bouncyBricks {
+            if object == brick {
+                
+            }
         }
     }
     func makeArrow(y: Int /* Changes the starting y position for 3 diff options */) {
@@ -120,7 +127,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         brick.position = CGPoint(x: x, y: y)
         brick.physicsBody = SKPhysicsBody(rectangleOf: brick.size)
         brick.physicsBody?.isDynamic = canMove ? true : false
+        brick.name = canMove ? "" : "noMove"
         brick.physicsBody?.affectedByGravity = false
+        brick.physicsBody?.allowsRotation = false
         addChild(brick)
         bricks.append(brick)
     }
@@ -147,7 +156,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         }
                     }
                     for brick in bricks {
-                        if node == brick {
+                        if brick.name != "noMove" && node == brick {
                             currentBrick = brick
                             brick.position.x = location.x
                             brick.position.y = location.y
