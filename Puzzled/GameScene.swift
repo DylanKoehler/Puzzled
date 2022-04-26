@@ -174,7 +174,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
             let location = touch.location(in: self)
-            for node in nodes(at: location) {
+            //for node in nodes(at: location) {
                 if !arrowShot {
                     for brick in bouncyBricks {
                         if currentBrick == brick {
@@ -190,7 +190,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     }
                 }
                 
-            }
+            //}
         }
     }
     //when you take finger off it changes current so next time you press it wont jump to the old current
