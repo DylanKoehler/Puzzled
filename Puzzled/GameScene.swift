@@ -21,6 +21,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var loseLabel = SKLabelNode()
     var resetLabel = SKLabelNode()
     var currentLvl = 0
+    var nextLvl = false
+    var resetLvl = false
     
     //functions and things
     override func didMove(to view: SKView) {
@@ -28,6 +30,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         //restarts game when app starts
         createBackground()
+        makeLabels()
         setLevel(level: currentLvl)
     }
     func didBegin(_ contact: SKPhysicsContact) {
@@ -43,12 +46,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if object == brick {
                 arrow.physicsBody?.isDynamic = false
                 print("Lose")
+                resetLevel()
             }
         }
         if object.name == "target" {
             arrow.physicsBody?.isDynamic = false
-            print("Win")
             nextLevel()
+            print("Win")
         }
         for brick in bouncyBricks {
             if object == brick {
@@ -142,36 +146,36 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bouncyBricks.append(bouncyBrick)
     }
     func makeLabels() {
-        winLabel.fontSize = 48
+        winLabel.fontSize = 100
         winLabel.text = "You Win"
         winLabel.fontName = "Arial"
-        winLabel.position = CGPoint(x: frame.midX, y: frame.maxY - 100)
+        winLabel.position = CGPoint(x: frame.midX, y: frame.midY + 150)
         winLabel.name = "winLabel"
-        winLabel.isHidden = true
+        winLabel.alpha = 0
         addChild(winLabel)
         
-        nextLabel.fontSize = 24
+        nextLabel.fontSize = 50
         nextLabel.text = "Next Level"
         nextLabel.fontName = "Arial"
         nextLabel.position = CGPoint(x: frame.midX, y: frame.midY)
         nextLabel.name = "nextLabel"
-        nextLabel.isHidden = true
+        nextLabel.alpha = 0
         addChild(nextLabel)
         
-        loseLabel.fontSize = 48
+        loseLabel.fontSize = 100
         loseLabel.text = "You Lose"
         loseLabel.fontName = "Arial"
-        loseLabel.position = CGPoint(x: frame.midX, y: frame.maxY - 100)
+        loseLabel.position = CGPoint(x: frame.midX, y: frame.midY + 150)
         loseLabel.name = "loseLabel"
-        loseLabel.isHidden = true
+        loseLabel.alpha = 0
         addChild(loseLabel)
         
-        resetLabel.fontSize = 24
+        resetLabel.fontSize = 50
         resetLabel.text = "Reset Level"
         resetLabel.fontName = "Arial"
         resetLabel.position = CGPoint(x: frame.midX, y: frame.midY)
         resetLabel.name = "resetLabel"
-        resetLabel.isHidden = true
+        resetLabel.alpha = 0
         addChild(resetLabel)
     }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -201,6 +205,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         
                     }
                 }
+                if nextLvl {
+                    if node.name == "nextLabel" {
+                        nextLevel()
+                    }
+                }
+                if resetLvl {
+                    if node.name == "resetLabel" {
+                        resetLevel()
+                    }
+                }
             }
         }
     }
@@ -208,21 +222,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for touch in touches {
             let location = touch.location(in: self)
             //for node in nodes(at: location) {
-                if !arrowShot {
-                    for brick in bouncyBricks {
-                        if currentBrick == brick {
-                            brick.position.x = location.x
-                            brick.position.y = location.y
-                        }
-                    }
-                    for brick in bricks {
-                        if currentBrick == brick {
-                            brick.position.x = location.x
-                            brick.position.y = location.y
-                        }
+            if !arrowShot {
+                for brick in bouncyBricks {
+                    if currentBrick == brick {
+                        brick.position.x = location.x
+                        brick.position.y = location.y
                     }
                 }
-                
+                for brick in bricks {
+                    if currentBrick == brick {
+                        brick.position.x = location.x
+                        brick.position.y = location.y
+                    }
+                }
+            }
+            
             //}
         }
     }
@@ -232,13 +246,33 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         currentBrick = target
     }
     func nextLevel() {
-        setLevel(level: currentLvl + 1)
+        if !nextLvl {
+            winLabel.alpha = 1
+            nextLabel.alpha = 1
+            nextLvl.toggle()
+        } else {
+            winLabel.alpha = 0
+            nextLabel.alpha = 0
+            nextLvl.toggle()
+            setLevel(level: currentLvl + 1)
+        }
     }
     func resetLevel() {
-        setLevel(level: currentLvl)
+        if !resetLvl {
+            loseLabel.alpha = 1
+            resetLabel.alpha = 1
+            resetLvl.toggle()
+        } else {
+            loseLabel.alpha = 0
+            resetLabel.alpha = 0
+            resetLvl.toggle()
+            setLevel(level: currentLvl)
+        }
     }
     func setLevel(level : Int) {
         currentLvl = level
+        arrowShot = false
+        clearBricks()
         switch currentLvl {
         case 0: //for testing
             makeArrow(y: -1)
@@ -249,10 +283,30 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             makeBrick(x: 0, y: 100, canMove: true)
             makeBrick(x: -100, y: 100, canMove: false)
         case 1: //level 1
+            makeBow(y: 1)
+            makeArrow(y: 1)
+            makeTarget(y: -1)
+            makeBouncyBrick(x: 50, y: 50, color: .magenta)
+            makeBouncyBrick(x: 100, y: 100, color: .magenta)
+            makeBouncyBrick(x: 100, y: 50, color: .magenta)
             return
         default:
             return
         }
+    }
+    func clearBricks () {
+        for brick in bricks {
+            if brick.parent != nil {
+                brick.removeFromParent()
+            }
+        }
+        bricks.removeAll()
+        for brick in bouncyBricks {
+            if brick.parent != nil {
+                brick.removeFromParent()
+            }
+        }
+        bouncyBricks.removeAll()
     }
 }
 
