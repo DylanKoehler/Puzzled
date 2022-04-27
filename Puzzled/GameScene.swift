@@ -129,11 +129,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func makeBouncyBrick(x: Int, y: Int, color: UIColor) {
-        let bouncyBrick = SKSpriteNode(color: .blue, size: CGSize(width: 100, height: 20))
+        let bouncyBrick = SKSpriteNode(color: .blue, size: CGSize(width: 75, height: 20))
         bouncyBrick.position = CGPoint(x: x, y: y)
         bouncyBrick.physicsBody = SKPhysicsBody(rectangleOf: bouncyBrick.size)
         bouncyBrick.physicsBody?.isDynamic = true
         bouncyBrick.physicsBody?.affectedByGravity = false
+        bouncyBrick.physicsBody?.allowsRotation = false
+        bouncyBrick.zRotation = 0.8
         addChild(bouncyBrick)
         bouncyBricks.append(bouncyBrick)
     }
@@ -204,7 +206,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             makeArrow(y: -1)
             makeTarget(y: -1)
             makeBow(y: -1)
-            makeBouncyBrick(x: 50, y: 50, color: .magenta)
+            makeBouncyBrick(x: 50, y: -100, color: .magenta)
             makeBrick(x: 100, y: 100, canMove: true)
             makeBrick(x: 0, y: 100, canMove: true)
             makeBrick(x: -100, y: 100, canMove: false)
