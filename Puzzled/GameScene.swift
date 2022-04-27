@@ -33,12 +33,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             collisionBetween(arrow: contact.bodyB.node!, object: contact.bodyA.node!)
         }
     }
-    func collisionBetween(arrow: SKNode, object: SKNode){
+    func collisionBetween(arrow: SKNode, object: SKNode) {
         //what happens when arrow hits target
         for brick in bricks {
             if object == brick {
                 arrow.physicsBody?.isDynamic = false
-                brick.physicsBody?.isDynamic = false
                 print("Lose")
             }
         }
@@ -70,7 +69,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         addChild(arrow)
     }
-    func makeBow(y: Int){
+    func makeBow(y: Int) {
         bow.removeFromParent()
         let bowPicture = SKTexture(imageNamed: "bow")
         bow = SKSpriteNode(texture: bowPicture, size: CGSize(width: 75, height: 75))
@@ -116,11 +115,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     // helper function used to make each brick
     func makeBrick(x: Int, y: Int, canMove: Bool) {
-        let brick = SKSpriteNode(color: canMove ? .red : .black, size: CGSize(width: 75, height: 75))
+        let brickPicture = SKTexture(imageNamed: "brick")
+        let brick = SKSpriteNode(texture: brickPicture, color: canMove ? .red : .black, size: CGSize(width: 75, height: 75))
         brick.position = CGPoint(x: x, y: y)
+        brick.colorBlendFactor = canMove ? 0.7 : 0.5
         brick.physicsBody = SKPhysicsBody(rectangleOf: brick.size)
-        brick.physicsBody?.isDynamic = canMove ? true : false
-        brick.name = canMove ? "" : "noMove"
+        brick.physicsBody?.isDynamic = false
+        brick.name = canMove ? "yesMove" : "noMove"
         brick.physicsBody?.affectedByGravity = false
         brick.physicsBody?.allowsRotation = false
         addChild(brick)
@@ -144,6 +145,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     for brick in bouncyBricks {
                         if node == brick {
                             currentBrick = brick
+                            brick.physicsBody?.isDynamic = true
                             brick.position.x = location.x
                             brick.position.y = location.y
                         }
@@ -151,6 +153,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     for brick in bricks {
                         if brick.name != "noMove" && node == brick {
                             currentBrick = brick
+                            brick.physicsBody?.isDynamic = true
                             brick.position.x = location.x
                             brick.position.y = location.y
                         }
@@ -188,12 +191,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     //when you take finger off it changes current so next time you press it wont jump to the old current
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        currentBrick.physicsBody?.isDynamic = false
         currentBrick = target
     }
-    func nextLevel(){
+    func nextLevel() {
         setLevel(level: currentLvl + 1)
     }
-    func setLevel(level : Int){
+    func setLevel(level : Int) {
         currentLvl = level
         switch currentLvl {
         case 0: //for testing
