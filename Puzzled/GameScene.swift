@@ -16,6 +16,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var bow = SKSpriteNode()
     var currentBrick = SKSpriteNode() //when moving brick faster than touches moved can keep up, this variable fixes by storing last touched node
     var arrowShot = false
+    var winLabel = SKLabelNode()
+    var nextLabel = SKLabelNode()
+    var loseLabel = SKLabelNode()
+    var resetLabel = SKLabelNode()
     var currentLvl = 0
     
     //functions and things
@@ -24,7 +28,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         //restarts game when app starts
         createBackground()
-        setLevel(level: 0)
+        setLevel(level: currentLvl)
     }
     func didBegin(_ contact: SKPhysicsContact) {
         if contact.bodyA.node?.name == "arrow" {
@@ -137,6 +141,39 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(bouncyBrick)
         bouncyBricks.append(bouncyBrick)
     }
+    func makeLabels() {
+        winLabel.fontSize = 48
+        winLabel.text = "You Win"
+        winLabel.fontName = "Arial"
+        winLabel.position = CGPoint(x: frame.midX, y: frame.maxY - 100)
+        winLabel.name = "winLabel"
+        winLabel.isHidden = true
+        addChild(winLabel)
+        
+        nextLabel.fontSize = 24
+        nextLabel.text = "Next Level"
+        nextLabel.fontName = "Arial"
+        nextLabel.position = CGPoint(x: frame.midX, y: frame.midY)
+        nextLabel.name = "nextLabel"
+        nextLabel.isHidden = true
+        addChild(nextLabel)
+        
+        loseLabel.fontSize = 48
+        loseLabel.text = "You Lose"
+        loseLabel.fontName = "Arial"
+        loseLabel.position = CGPoint(x: frame.midX, y: frame.maxY - 100)
+        loseLabel.name = "loseLabel"
+        loseLabel.isHidden = true
+        addChild(loseLabel)
+        
+        resetLabel.fontSize = 24
+        resetLabel.text = "Reset Level"
+        resetLabel.fontName = "Arial"
+        resetLabel.position = CGPoint(x: frame.midX, y: frame.midY)
+        resetLabel.name = "resetLabel"
+        resetLabel.isHidden = true
+        addChild(resetLabel)
+    }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
             let location = touch.location(in: self)
@@ -196,6 +233,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     func nextLevel() {
         setLevel(level: currentLvl + 1)
+    }
+    func resetLevel() {
+        setLevel(level: currentLvl)
     }
     func setLevel(level : Int) {
         currentLvl = level
