@@ -55,8 +55,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     func makeArrow(y: Int /* Changes the starting y position for 3 diff options */) {
         arrow.removeFromParent() //remove arrow if exists
-        let arrowPicture = SKTexture(imageNamed: "arrow")
-        arrow = SKSpriteNode(texture: arrowPicture, size: CGSize(width: 75, height: 10))
+        arrow = SKSpriteNode(imageNamed: "arrow")
         arrow.position = CGPoint(x: frame.minX + 50, y: frame.midY + CGFloat((200 * y)))
         arrow.name = "arrow"
         
