@@ -9,7 +9,7 @@ import SpriteKit
 import GameplayKit
 class GameScene: SKScene, SKPhysicsContactDelegate {
     //variables and things
-    var arrow = SKSpriteNode()
+    var arrow = SKShapeNode()
     var target = SKSpriteNode()
     var bouncyBricks = [SKSpriteNode]()
     var bricks = [SKSpriteNode]()
@@ -54,18 +54,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     func makeArrow(y: Int /* Changes the starting y position for 3 diff options */) {
         arrow.removeFromParent() //remove arrow if exists
-        arrow = SKSpriteNode(color: .red, size: CGSize(width: 75, height: 10))
+        arrow = SKShapeNode(circleOfRadius: 15)
         arrow.position = CGPoint(x: frame.minX + 50, y: frame.midY + CGFloat((200 * y)))
         arrow.name = "arrow"
-        
+        arrow.fillColor = .red
         arrow.physicsBody?.usesPreciseCollisionDetection = true
-        arrow.physicsBody = SKPhysicsBody(rectangleOf: arrow.size)
+        arrow.physicsBody = SKPhysicsBody(circleOfRadius: 15)
         arrow.physicsBody!.contactTestBitMask = arrow.physicsBody!.collisionBitMask
         arrow.physicsBody?.isDynamic = false
         arrow.physicsBody?.friction = 0
         arrow.physicsBody?.affectedByGravity = false
         arrow.physicsBody?.restitution = 1
         arrow.physicsBody?.linearDamping = 0
+        arrow.physicsBody?.contactTestBitMask = (arrow.physicsBody?.collisionBitMask)!
+
         
         addChild(arrow)
     }
