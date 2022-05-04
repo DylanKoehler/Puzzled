@@ -179,6 +179,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(resetLabel)
     }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for brick in bricks {
+            brick.physicsBody?.isDynamic = false
+        }
+        for brick in bouncyBricks {
+            brick.physicsBody?.isDynamic = false
+        }
         for touch in touches {
             let location = touch.location(in: self)
             for node in nodes(at: location) {
@@ -187,16 +193,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         if node == brick {
                             currentBrick = brick
                             brick.physicsBody?.isDynamic = true
-                            brick.position.x = location.x
-                            brick.position.y = location.y
+                            brick.position = location
                         }
                     }
                     for brick in bricks {
                         if brick.name != "noMove" && node == brick {
                             currentBrick = brick
                             brick.physicsBody?.isDynamic = true
-                            brick.position.x = location.x
-                            brick.position.y = location.y
+                            brick.position = location
                         }
                     }
                     if node.name == "bow" {
@@ -225,14 +229,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if !arrowShot {
                 for brick in bouncyBricks {
                     if currentBrick == brick {
-                        brick.position.x = location.x
-                        brick.position.y = location.y
+                        brick.position = location
                     }
                 }
                 for brick in bricks {
                     if currentBrick == brick {
-                        brick.position.x = location.x
-                        brick.position.y = location.y
+                        brick.position = location
                     }
                 }
             }
@@ -242,8 +244,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     //when you take finger off it changes current so next time you press it wont jump to the old current
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        currentBrick.physicsBody?.isDynamic = false
+        //fixes bricks that could be inside eachother.
+        for brick in bricks {
+            if (brick.name != "noMove"){
+                brick.physicsBody?.isDynamic = true
+            }
+        }
+        for brick in bouncyBricks {
+            if (brick.name != "noMove"){
+                brick.physicsBody?.isDynamic = true
+            }
+        }
         currentBrick = target
+        
     }
     func nextLevel() {
         if !nextLvl {
