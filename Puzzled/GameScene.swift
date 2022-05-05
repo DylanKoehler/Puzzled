@@ -79,7 +79,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     func makeBow(y: Int) {
         bow.removeFromParent()
-        let bowPicture = SKTexture(imageNamed: "bow")
+        let bowPicture = SKTexture(imageNamed: "slingshot")
         bow = SKSpriteNode(texture: bowPicture, size: CGSize(width: 75, height: 75))
         bow.physicsBody = SKPhysicsBody(rectangleOf: bow.size)
         bow.position = CGPoint(x: frame.minX + 50, y: frame.midY + CGFloat((200 * y)))
