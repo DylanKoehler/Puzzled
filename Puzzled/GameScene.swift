@@ -42,27 +42,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     func collisionBetween(ball: SKNode, object: SKNode) {
         //what happens when ball hits target
-        for brick in bricks {
-            if object == brick {
-                ball.physicsBody?.isDynamic = false
-                print("Lose")
-                resetLevel()
+        if ballShot {
+            for brick in bricks {
+                if object == brick {
+                    ball.physicsBody?.isDynamic = false
+                    print("Lose")
+                    resetLevel()
+                }
             }
-        }
-        if object.name == "target" {
-            ball.physicsBody?.isDynamic = false
-            nextLevel()
-            print("Win")
-        }
-        for brick in bouncyBricks {
-            if object == brick {
-                
+            if object.name == "target" {
+                ball.physicsBody?.isDynamic = false
+                nextLevel()
+                print("Win")
+            }
+            for brick in bouncyBricks {
+                if object == brick {
+                    
+                }
             }
         }
     }
     func makeBall(y: Int /* Changes the starting y position for 3 diff options */) {
         ball.removeFromParent() //remove ball if exists
-        ball = SKShapeNode(circleOfRadius: 10)
+        let ballPicture = SKTexture(imageNamed: "Ball")
+        ball = SKShapeNode(circleOfRadius: 15)
+        ball.fillTexture = ballPicture
+        ball.fillColor = .darkGray
         ball.position = CGPoint(x: frame.minX + 50, y: frame.midY + CGFloat((200 * y)))
         ball.name = "ball"
         
@@ -137,9 +142,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func makeBouncyBrick(x: Int, y: Int, canMove: Bool, type: Int) {
-        let brickPicture = SKTexture(imageNamed: "brick")
-        let bouncyBrick = SKSpriteNode(texture: brickPicture, color: canMove ? .systemPink : .systemPurple, size: CGSize(width: 100, height: 20))
-        bouncyBrick.colorBlendFactor = 0.9
+        let brickPicture = SKTexture(imageNamed: "Bouncy")
+        let bouncyBrick = SKSpriteNode(texture: brickPicture, color: canMove ? .magenta : .black, size: CGSize(width: 100, height: 20))
+        bouncyBrick.colorBlendFactor = canMove ? 0.3 : 0.7
         bouncyBrick.position = CGPoint(x: x, y: y)
         bouncyBrick.physicsBody = SKPhysicsBody(rectangleOf: bouncyBrick.size)
         bouncyBrick.physicsBody?.isDynamic = false
@@ -153,33 +158,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func makeLabels() {
         winLabel.fontSize = 100
         winLabel.text = "You Win"
-        winLabel.fontName = "Arial"
+        winLabel.fontName = "Georgia-Bold"
         winLabel.position = CGPoint(x: frame.midX, y: frame.midY + 150)
         winLabel.name = "winLabel"
+        winLabel.color = .darkGray
         winLabel.alpha = 0
         addChild(winLabel)
         
         nextLabel.fontSize = 50
         nextLabel.text = "Next Level"
-        nextLabel.fontName = "Arial"
+        nextLabel.fontName = "Georgia-Bold"
         nextLabel.position = CGPoint(x: frame.midX, y: frame.midY)
         nextLabel.name = "nextLabel"
+        nextLabel.color = .darkGray
         nextLabel.alpha = 0
         addChild(nextLabel)
         
         loseLabel.fontSize = 100
         loseLabel.text = "You Lose"
-        loseLabel.fontName = "Arial"
+        loseLabel.fontName = "Georgia-Bold"
         loseLabel.position = CGPoint(x: frame.midX, y: frame.midY + 150)
         loseLabel.name = "loseLabel"
+        loseLabel.color = .darkGray
         loseLabel.alpha = 0
         addChild(loseLabel)
         
         resetLabel.fontSize = 50
         resetLabel.text = "Reset Level"
-        resetLabel.fontName = "Arial"
+        resetLabel.fontName = "Georgia-Bold"
         resetLabel.position = CGPoint(x: frame.midX, y: frame.midY)
         resetLabel.name = "resetLabel"
+        resetLabel.color = .darkGray
         resetLabel.alpha = 0
         addChild(resetLabel)
     }
@@ -307,7 +316,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             makeBall(y: 1)
             makeTarget(y: -1)
             makeBouncyBrick(x: 50, y: 50, canMove: true, type: 1)
-            makeBouncyBrick(x: 100, y: 100, canMove: true, type: 1)
+            makeBouncyBrick(x: 100, y: 100, canMove: true, type: -1)
             makeBouncyBrick(x: 100, y: 50, canMove: true, type: -1)
             return
         default:
