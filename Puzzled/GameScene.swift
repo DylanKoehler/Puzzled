@@ -25,6 +25,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var resetLvl = false
     
     //functions and things
+    
+    //start game function
     override func didMove(to view: SKView) {
         physicsWorld.contactDelegate = self
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
@@ -33,6 +35,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         makeLabels()
         setLevel(level: currentLvl)
     }
+    //used for collisions
     func didBegin(_ contact: SKPhysicsContact) {
         if contact.bodyA.node?.name == "ball" {
             collisionBetween(ball: contact.bodyA.node!, object: contact.bodyB.node!)
@@ -40,6 +43,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             collisionBetween(ball: contact.bodyB.node!, object: contact.bodyA.node!)
         }
     }
+    //detects collision between a ball and inputed object
     func collisionBetween(ball: SKNode, object: SKNode) {
         //what happens when ball hits target
         if ballShot {
@@ -62,9 +66,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
+    //creates the ball
     func makeBall(y: Int /* Changes the starting y position for 3 diff options */) {
         ball.removeFromParent() //remove ball if exists
-        let ballPicture = SKTexture(imageNamed: "Ball")
+        let ballPicture = SKTexture(imageNamed: "Ball") //creates a texture that is overlayed on the ball
         ball = SKShapeNode(circleOfRadius: 15)
         ball.fillTexture = ballPicture
         ball.fillColor = .darkGray
@@ -75,6 +80,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ball.physicsBody = SKPhysicsBody(circleOfRadius: 10)
         ball.physicsBody!.contactTestBitMask = ball.physicsBody!.collisionBitMask
         ball.physicsBody?.isDynamic = false
+        //makes sure ball doesnt slow down when shot
         ball.physicsBody?.friction = 0
         ball.physicsBody?.affectedByGravity = false
         ball.physicsBody?.restitution = 1
@@ -82,9 +88,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         addChild(ball)
     }
+    //creates the target
     func makeBow(y: Int) {
         bow.removeFromParent()
-        let bowPicture = SKTexture(imageNamed: "slingshot")
+        let bowPicture = SKTexture(imageNamed: "slingshot") //create texture that is overlayed on the "bow"
         bow = SKSpriteNode(texture: bowPicture, size: CGSize(width: 75, height: 75))
         bow.physicsBody = SKPhysicsBody(rectangleOf: bow.size)
         bow.position = CGPoint(x: frame.minX + 50, y: frame.midY + CGFloat((200 * y)) - 10)
@@ -99,10 +106,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         addChild(bow)
     }
+    //starts moving the ball
     func shootBall() {
         ball.physicsBody?.isDynamic = true
         ball.physicsBody?.applyImpulse(CGVector(dx: 5, dy: 0))
     }
+    //creates the target
     func makeTarget(y : Int) {
         target.removeFromParent() //remove target if exists
         let targetPicture = SKTexture(imageNamed: "target")
@@ -117,6 +126,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         addChild(target)
     }
+    //creates the background
     func createBackground() {
         for i in 0...1 {
             let sunset = SKTexture(imageNamed: "sunset")
@@ -138,10 +148,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         brick.physicsBody?.affectedByGravity = false
         brick.physicsBody?.allowsRotation = false
         addChild(brick)
-        bricks.append(brick)
+        bricks.append(brick) //adds to list of bricks so code can keep track of all the different bricks
     }
-    
-    func makeBouncyBrick(x: Int, y: Int, canMove: Bool, type: Int) {
+    //creates bouncy bricks
+    func makeBouncyBrick(x: Int, y: Int, canMove: Bool, type: Int /* -1 means left, 1 means right*/ ) {
         let brickPicture = SKTexture(imageNamed: "Bouncy")
         let bouncyBrick = SKSpriteNode(texture: brickPicture, color: canMove ? .magenta : .black, size: CGSize(width: 100, height: 20))
         bouncyBrick.colorBlendFactor = canMove ? 0.3 : 0.7
@@ -151,14 +161,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bouncyBrick.name = canMove ? "yesMove" : "noMove"
         bouncyBrick.physicsBody?.affectedByGravity = false
         bouncyBrick.physicsBody?.allowsRotation = false
-        bouncyBrick.zRotation = 0.8 * CGFloat(type)
+        bouncyBrick.zRotation = 0.8 * CGFloat(type) //sets rectangle to 45 degrees so ball bounces 90 degrees
         addChild(bouncyBrick)
         bouncyBricks.append(bouncyBrick)
     }
+    //creates the win lose labels
     func makeLabels() {
         winLabel.fontSize = 100
         winLabel.text = "You Win"
-        winLabel.fontName = "Georgia-Bold"
+        winLabel.fontName = "Georgia-Bold" //big font for easier reading
         winLabel.position = CGPoint(x: frame.midX, y: frame.midY + 150)
         winLabel.name = "winLabel"
         winLabel.color = .darkGray
@@ -196,7 +207,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         resetLabel.zPosition = 1
         addChild(resetLabel)
     }
+    //detects finger presses
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        //makes sure none of the bricks can move on there own
         for brick in bricks {
             brick.physicsBody?.isDynamic = false
         }
@@ -207,9 +220,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let location = touch.location(in: self)
             for node in nodes(at: location) {
                 if !ballShot {
+                    //checks all bouncy and normal bricks if they are being touched by finger
                     for brick in bouncyBricks {
                         if currentBrick == target && brick.name != "noMove" && node == brick {
                             currentBrick = brick
+                            //letting current brick use physics so they cant be placed inside other bricks
                             brick.physicsBody?.isDynamic = true
                             brick.position = location
                         }
@@ -221,12 +236,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             brick.position = location
                         }
                     }
+                    //shoots ball if touching the bow
                     if node.name == "bow" {
                         shootBall()
                         ballShot = true
                         
                     }
                 }
+                //if touching reset or next level labels does the corrisponding action
                 if nextLvl {
                     if node.name == "nextLabel" {
                         nextLevel()
@@ -240,12 +257,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
+    //detects finger movment/dragging
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
             let location = touch.location(in: self)
             //for node in nodes(at: location) {
             if !ballShot {
                 for brick in bouncyBricks {
+                    //uses current brick instead of checking every brick, so if user moves finger to fast, it wont lose the brick they want to move
                     if currentBrick == brick {
                         brick.position = location
                     }
@@ -260,14 +279,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //}
         }
     }
-    //when you take finger off it changes current so next time you press it wont jump to the old current
+    //for finger release
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         //fixes bricks that could be inside eachother.
         spreadBricks(condition: currentBrick != target)
+        //changes current brick on release so next finger press wont confuse previous current brick with the current
         currentBrick = target
     }
     func spreadBricks (condition : Bool) {
         if condition {
+            //sets all bricks and bouncy bricks to dynamic so physics can push bricks outside of eachother
             for brick in bricks {
                 if (brick.name != "noMove"){
                     brick.physicsBody?.isDynamic = true
@@ -280,6 +301,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
+    //creates next level and next level labels
     func nextLevel() {
         if !nextLvl {
             winLabel.alpha = 1
@@ -292,6 +314,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             setLevel(level: currentLvl + 1)
         }
     }
+    //resets level and creates reset level labels
     func resetLevel() {
         if !resetLvl {
             loseLabel.alpha = 1
@@ -304,9 +327,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             setLevel(level: currentLvl)
         }
     }
+    //sets level specified number, also resets everything. (clearing all bricks, stopping ball, reseting variables etc.)
     func setLevel(level : Int) {
         currentLvl = level
         ballShot = false
+        ball.physicsBody?.isDynamic = false
         clearBricks()
         switch currentLvl {
         case 0: //for testing
@@ -323,11 +348,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             makeTarget(y: 0)
             makeBrick(x: 0, y: 0, canMove: true)
             return
+        case 2: //level 2
+            makeBow(y: -1)
+            makeBall(y: 0)
+            makeTarget(y: 0)
+            makeBrick(x: 0, y: -200, canMove: true)
+            makeBouncyBrick(x: -100, y: 0, canMove: false, type: 1)
+            makeBouncyBrick(x: -100, y: -200, canMove: false, type: -1)
         default:
             return
         }
         spreadBricks(condition: true)
     }
+    //clears all bricks and bouncy bricks
     func clearBricks () {
         for brick in bricks {
             if brick.parent != nil {
