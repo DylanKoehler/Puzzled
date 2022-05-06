@@ -151,7 +151,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bricks.append(brick) //adds to list of bricks so code can keep track of all the different bricks
     }
     //creates bouncy bricks
-    func makeBouncyBrick(x: Int, y: Int, canMove: Bool, type: Int /* -1 means left, 1 means right*/ ) {
+    func makeBouncyBrick(x: Int, y: Int, canMove: Bool, type: Int /* -1 means top leans left, 1 means leans right*/ ) {
         let brickPicture = SKTexture(imageNamed: "Bouncy")
         let bouncyBrick = SKSpriteNode(texture: brickPicture, color: canMove ? .magenta : .black, size: CGSize(width: 100, height: 20))
         bouncyBrick.colorBlendFactor = canMove ? 0.3 : 0.7
@@ -349,14 +349,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             makeBrick(x: 0, y: 0, canMove: true)
             return
         case 2: //level 2
-            makeBow(y: -1)
+            makeBow(y: 0)
+            makeBall(y: 0)
+            makeTarget(y: -1)
+            makeBrick(x: 0, y: -200, canMove: true)
+            makeBouncyBrick(x: -100, y: 30, canMove: false, type: -1)
+            makeBouncyBrick(x: -70, y: -200, canMove: false, type: -1)
+        default:
             makeBall(y: 0)
             makeTarget(y: 0)
-            makeBrick(x: 0, y: -200, canMove: true)
-            makeBouncyBrick(x: -100, y: 0, canMove: false, type: 1)
-            makeBouncyBrick(x: -100, y: -200, canMove: false, type: -1)
-        default:
-            return
+            makeBow(y: 0)
         }
         spreadBricks(condition: true)
     }
