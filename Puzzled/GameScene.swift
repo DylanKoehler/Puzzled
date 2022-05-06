@@ -20,7 +20,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var nextLabel = SKLabelNode()
     var loseLabel = SKLabelNode()
     var resetLabel = SKLabelNode()
-    var currentLvl = 0
+    var currentLvl = 1
     var nextLvl = false
     var resetLvl = false
     
@@ -87,7 +87,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let bowPicture = SKTexture(imageNamed: "slingshot")
         bow = SKSpriteNode(texture: bowPicture, size: CGSize(width: 75, height: 75))
         bow.physicsBody = SKPhysicsBody(rectangleOf: bow.size)
-        bow.position = CGPoint(x: frame.minX + 50, y: frame.midY + CGFloat((200 * y)))
+        bow.position = CGPoint(x: frame.minX + 50, y: frame.midY + CGFloat((200 * y)) - 10)
         bow.zRotation = -.pi/9
         bow.name = "bow"
         
@@ -163,6 +163,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         winLabel.name = "winLabel"
         winLabel.color = .darkGray
         winLabel.alpha = 0
+        winLabel.zPosition = 1
         addChild(winLabel)
         
         nextLabel.fontSize = 50
@@ -172,6 +173,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         nextLabel.name = "nextLabel"
         nextLabel.color = .darkGray
         nextLabel.alpha = 0
+        nextLabel.zPosition = 1
         addChild(nextLabel)
         
         loseLabel.fontSize = 100
@@ -181,6 +183,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         loseLabel.name = "loseLabel"
         loseLabel.color = .darkGray
         loseLabel.alpha = 0
+        loseLabel.zPosition = 1
         addChild(loseLabel)
         
         resetLabel.fontSize = 50
@@ -190,6 +193,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         resetLabel.name = "resetLabel"
         resetLabel.color = .darkGray
         resetLabel.alpha = 0
+        resetLabel.zPosition = 1
         addChild(resetLabel)
     }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -204,14 +208,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             for node in nodes(at: location) {
                 if !ballShot {
                     for brick in bouncyBricks {
-                        if brick.name != "noMove" && node == brick {
+                        if currentBrick == target && brick.name != "noMove" && node == brick {
                             currentBrick = brick
                             brick.physicsBody?.isDynamic = true
                             brick.position = location
                         }
                     }
                     for brick in bricks {
-                        if brick.name != "noMove" && node == brick {
+                        if currentBrick == target && brick.name != "noMove" && node == brick {
                             currentBrick = brick
                             brick.physicsBody?.isDynamic = true
                             brick.position = location
@@ -259,7 +263,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //when you take finger off it changes current so next time you press it wont jump to the old current
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         //fixes bricks that could be inside eachother.
-        if currentBrick != target {
+        spreadBricks(condition: currentBrick != target)
+        currentBrick = target
+    }
+    func spreadBricks (condition : Bool) {
+        if condition {
             for brick in bricks {
                 if (brick.name != "noMove"){
                     brick.physicsBody?.isDynamic = true
@@ -271,8 +279,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
         }
-        currentBrick = target
-        
     }
     func nextLevel() {
         if !nextLvl {
@@ -312,16 +318,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             makeBrick(x: 0, y: 100, canMove: true)
             makeBrick(x: -100, y: 100, canMove: false)
         case 1: //level 1
-            makeBow(y: 1)
-            makeBall(y: 1)
-            makeTarget(y: -1)
-            makeBouncyBrick(x: 50, y: 50, canMove: true, type: 1)
-            makeBouncyBrick(x: 100, y: 100, canMove: true, type: -1)
-            makeBouncyBrick(x: 100, y: 50, canMove: true, type: -1)
+            makeBow(y: 0)
+            makeBall(y: 0)
+            makeTarget(y: 0)
+            makeBrick(x: 0, y: 0, canMove: true)
             return
         default:
             return
         }
+        spreadBricks(condition: true)
     }
     func clearBricks () {
         for brick in bricks {
