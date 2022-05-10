@@ -356,11 +356,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             makeBouncyBrick(x: 100, y: 100, canMove: true, type: -1)
             makeBouncyBrick(x: 100, y: 50, canMove: true, type: -1)
             makeBrick(x: 300, y: 0, canMove: false)
-        case 2:  //level 2
+            makeBrick(x: -375, y: 0, canMove: false)
+        case 3:  //level 3
             makeBow(y: 1)
             makeBall(y: 1)
-            makeTarget(y: -1)
-            makeBouncyBrick(x: 50, y: 50, canMove: true, type: -1)
+            makeTarget(y: 1)
+            makeBrick(x: -175, y: 200, canMove: false)
+            makeBrick(x: 325, y: 125, canMove: false)
+            makeBouncyBrick(x: 50, y: 0, canMove: true, type: -1)
+            makeBouncyBrick(x: -50, y: 0, canMove: true, type: -1)
+            makeBouncyBrick(x: 0, y: 50, canMove: true, type: 1)
+            makeBouncyBrick(x: 0, y: -50, canMove: true, type: 1)
+
+            
             return
         default:
             makeBall(y: 0)
