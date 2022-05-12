@@ -7,6 +7,7 @@
 
 import SpriteKit
 import GameplayKit
+import AVFoundation
 class GameScene: SKScene, SKPhysicsContactDelegate {
     //variables and things
     var ball = SKShapeNode()
@@ -20,6 +21,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var nextLabel = SKLabelNode()
     var loseLabel = SKLabelNode()
     var resetLabel = SKLabelNode()
+    var bkMusic = SKAudioNode()
     var currentLvl = 1
     var nextLvl = false
     var resetLvl = false
@@ -61,7 +63,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             for brick in bouncyBricks {
                 if object == brick {
-                    
+                    run(SKAction.playSoundFileNamed("boing.mp3", waitForCompletion: false))
                 }
             }
         }
@@ -376,6 +378,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
         bouncyBricks.removeAll()
+    }
+    func makeBKMusic(){
+        bkMusic.removeFromParent()
+        bkMusic = SKAudioNode(fileNamed : "")
+        bkMusic.isPositional = false
+        addChild(bkMusic)
     }
 }
 
