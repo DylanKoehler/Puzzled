@@ -23,7 +23,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var resetLabel = SKLabelNode()
     var bkMusic = SKAudioNode()
     var borders = [SKSpriteNode()]
-    var currentLvl = 0
+    var currentLvl = 1
     var nextLvl = false
     var resetLvl = false
     
@@ -133,12 +133,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ball.physicsBody?.applyImpulse(CGVector(dx: 5, dy: 0))
     }
     //creates the target
-    func makeTarget(y : Int) {
+    func makeTarget(pos : CGPoint) {
         target.removeFromParent() //remove target if exists
         let targetPicture = SKTexture(imageNamed: "target")
         target = SKSpriteNode(texture: targetPicture, size: CGSize(width: 75, height: 75))
         target.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 20, height: 20))
-        target.position = CGPoint(x: frame.maxX - 50, y: frame.midY + CGFloat((200 * y)))
+        target.position = pos
         target.zPosition = -1
         target.name = "target"
         target.physicsBody?.isDynamic = false
@@ -368,13 +368,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         case 1: //level 1
             makeBow(y: 0)
             makeBall(y: 0)
-            makeTarget(y: 0)
+            makeTarget(pos: CGPoint(x: 315, y: frame.midY))
             makeBrick(x: 0, y: 0, canMove: true)
             return
         case 2: //level 2
             makeBow(y: 0)
             makeBall(y: 0)
-            makeTarget(y: -1)
+            makeTarget(pos: CGPoint(x: 315, y: -200))
             makeBouncyBrick(x: 50, y: 50, canMove: true, type: 1)
             makeBouncyBrick(x: 100, y: 100, canMove: true, type: -1)
             makeBouncyBrick(x: 100, y: 50, canMove: true, type: -1)
@@ -383,7 +383,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         case 3:  //level 3
             makeBow(y: 1)
             makeBall(y: 1)
-            makeTarget(y: 1)
+            makeTarget(pos: CGPoint(x: 315, y: 200))
             makeBrick(x: -175, y: 200, canMove: false)
             makeBrick(x: 325, y: 125, canMove: false)
             makeBouncyBrick(x: 50, y: 0, canMove: true, type: -1)
@@ -395,7 +395,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             return
         default:
             makeBall(y: 0)
-            makeTarget(y: 0)
+            makeTarget(pos: CGPoint(x: 315, y: frame.midY))
             makeBow(y: 0)
         }
         spreadBricks(condition: true)
