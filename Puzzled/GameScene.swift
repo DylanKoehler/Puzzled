@@ -30,11 +30,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     //start game function
     override func didMove(to view: SKView) {
+        self.scaleMode = SKSceneScaleMode.aspectFill
         physicsWorld.contactDelegate = self
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         //restarts game when app starts
         createBackground()
-        makeLabels()
+        bkMusic.run(SKAction.play())
+        makeLabels(color: .black)
         setLevel(level: currentLvl)
     }
     //used for collisions
@@ -130,13 +132,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     //creates the background
     func createBackground() {
-        for i in 0...1 {
             let sunset = SKTexture(imageNamed: "sunset")
             let sunsetBackground = SKSpriteNode(texture: sunset)
             sunsetBackground.zPosition = -2
-            sunsetBackground.position = CGPoint(x: 0, y: sunsetBackground.size.height * CGFloat(i))
+            sunsetBackground.position = CGPoint(x: 0, y: frame.midY)
             addChild(sunsetBackground)
-        }
     }
     // helper function used to make each brick
     func makeBrick(x: Int, y: Int, canMove: Bool) {
@@ -168,13 +168,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bouncyBricks.append(bouncyBrick)
     }
     //creates the win lose labels
-    func makeLabels() {
+    func makeLabels(color : UIColor) {
         winLabel.fontSize = 100
         winLabel.text = "You Win"
         winLabel.fontName = "Georgia-Bold" //big font for easier reading
         winLabel.position = CGPoint(x: frame.midX, y: frame.midY + 150)
         winLabel.name = "winLabel"
-        winLabel.color = .darkGray
+        winLabel.fontColor = color
         winLabel.alpha = 0
         winLabel.zPosition = 1
         addChild(winLabel)
@@ -184,7 +184,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         nextLabel.fontName = "Georgia-Bold"
         nextLabel.position = CGPoint(x: frame.midX, y: frame.midY)
         nextLabel.name = "nextLabel"
-        nextLabel.color = .darkGray
+        nextLabel.fontColor = color
         nextLabel.alpha = 0
         nextLabel.zPosition = 1
         addChild(nextLabel)
@@ -194,7 +194,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         loseLabel.fontName = "Georgia-Bold"
         loseLabel.position = CGPoint(x: frame.midX, y: frame.midY + 150)
         loseLabel.name = "loseLabel"
-        loseLabel.color = .darkGray
+        loseLabel.fontColor = color
         loseLabel.alpha = 0
         loseLabel.zPosition = 1
         addChild(loseLabel)
@@ -204,7 +204,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         resetLabel.fontName = "Georgia-Bold"
         resetLabel.position = CGPoint(x: frame.midX, y: frame.midY)
         resetLabel.name = "resetLabel"
-        resetLabel.color = .darkGray
+        resetLabel.fontColor = color
         resetLabel.alpha = 0
         resetLabel.zPosition = 1
         addChild(resetLabel)
@@ -395,8 +395,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bouncyBricks.removeAll()
     }
     func makeBKMusic(){
+//        Endless Summer by Luke Bergs | https://soundcloud.com/bergscloud/
+//        Music promoted by https://www.chosic.com/free-music/all/
+//        Creative Commons CC BY-SA 3.0
+//        https://creativecommons.org/licenses/by-sa/3.0/
+//        Tropical Soul by Luke Bergs | https://soundcloud.com/bergscloud/
+//        Music promoted by https://www.chosic.com/free-music/all/
+//        Creative Commons CC BY-SA 3.0
+//        https://creativecommons.org/licenses/by-sa/3.0/
+//        Downtown Glow by Ghostrifter & Devyzed
+//        Creative Commons — Attribution-NoDerivs 3.0 Unported — CC BY-ND 3.0
+//        Music promoted by https://www.chosic.com/free-music/all/
         bkMusic.removeFromParent()
-        bkMusic = SKAudioNode(fileNamed : "")
+        bkMusic = SKAudioNode(fileNamed : "background 1")
         bkMusic.isPositional = false
         addChild(bkMusic)
     }
