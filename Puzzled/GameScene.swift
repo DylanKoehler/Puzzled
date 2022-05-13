@@ -22,7 +22,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var loseLabel = SKLabelNode()
     var resetLabel = SKLabelNode()
     var bkMusic = SKAudioNode()
-    var currentLvl = 1
+    var borders = [SKSpriteNode()]
+    var currentLvl = 0
     var nextLvl = false
     var resetLvl = false
     
@@ -34,7 +35,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         physicsWorld.contactDelegate = self
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         //restarts game when app starts
+        //removes all borders
+        for border in borders {
+            if border.parent != nil {
+                border.removeFromParent()
+            }
+        }
+        borders.removeAll()
+        //creates other stuff
         createBackground()
+        makeBorders()
+        makeBKMusic()
         bkMusic.run(SKAction.play())
         makeLabels(color: .black)
         setLevel(level: currentLvl)
@@ -55,6 +66,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if object == brick {
                     ball.physicsBody?.isDynamic = false
                     print("Lose")
+                    resetLevel()
+                }
+            }
+            for border in borders {
+                if object == border {
+                    ball.physicsBody?.isDynamic = false
                     resetLevel()
                 }
             }
@@ -283,6 +300,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     //for finger release
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        //teleports bricks moved outside the border back to middle
+        if abs(currentBrick.position.y) > 220 || abs(currentBrick.position.x) > frame.maxX{
+            currentBrick.position = CGPoint(x: 0, y: 0)
+        }
         //fixes bricks that could be inside eachother.
         spreadBricks(condition: currentBrick != target)
         //changes current brick on release so next finger press wont confuse previous current brick with the current
@@ -338,7 +359,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         switch currentLvl {
         case 0: //for testing
             makeBall(y: -1)
-            makeTarget(y: -1)
+            //makeTarget(y: -1)
             makeBow(y: -1)
             makeBouncyBrick(x: 50, y: 50, canMove: true, type: 1)
             makeBrick(x: 100, y: 100, canMove: true)
@@ -394,7 +415,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         bouncyBricks.removeAll()
     }
+    //background musjc
     func makeBKMusic(){
+        //credits:
 //        Endless Summer by Luke Bergs | https://soundcloud.com/bergscloud/
 //        Music promoted by https://www.chosic.com/free-music/all/
 //        Creative Commons CC BY-SA 3.0
@@ -407,9 +430,35 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        Creative Commons — Attribution-NoDerivs 3.0 Unported — CC BY-ND 3.0
 //        Music promoted by https://www.chosic.com/free-music/all/
         bkMusic.removeFromParent()
-        bkMusic = SKAudioNode(fileNamed : "background 1")
+        bkMusic = SKAudioNode(fileNamed : "background 2")
         bkMusic.isPositional = false
+        bkMusic.run(SKAction.changeVolume(to: 1, duration: 0))
         addChild(bkMusic)
+    }
+    //makes border surrounding the play area
+    func makeTopBottomBorder(isTop : Bool) {
+        let border = SKSpriteNode(color: .clear, size: CGSize(width: frame.maxX - frame.minY, height: 50))
+        border.physicsBody = SKPhysicsBody(rectangleOf: border.size)
+        border.physicsBody?.affectedByGravity = false
+        border.physicsBody?.isDynamic = false
+        border.position = CGPoint(x: frame.midX, y: isTop ? 275 : -275)
+        addChild(border)
+        borders.append(border)
+    }
+    func makeLeftRightBorder(isLeft : Bool) {
+        let border = SKSpriteNode(color: .clear, size: CGSize(width: 50, height: 400))
+        border.physicsBody = SKPhysicsBody(rectangleOf: border.size)
+        border.physicsBody?.affectedByGravity = false
+        border.physicsBody?.isDynamic = false
+        border.position = CGPoint(x: isLeft ? frame.maxX + 20: frame.minX - 20, y: frame.midY)
+        addChild(border)
+        borders.append(border)
+    }
+    func makeBorders(){
+        makeTopBottomBorder(isTop: true)
+        makeTopBottomBorder(isTop: false)
+        makeLeftRightBorder(isLeft: true)
+        makeLeftRightBorder(isLeft: false)
     }
 }
 
