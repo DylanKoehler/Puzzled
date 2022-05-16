@@ -21,12 +21,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var nextLabel = SKLabelNode()
     var loseLabel = SKLabelNode()
     var resetLabel = SKLabelNode()
+    var restartLabel = SKLabelNode()
     var bkMusic = SKAudioNode()
     var borders = [SKSpriteNode()]
     var tutorial = SKLabelNode()
     var currentLvl = 1
     var nextLvl = false
     var resetLvl = false
+    var restartGame = false
     
     //functions and things
     
@@ -232,6 +234,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         resetLabel.alpha = 0
         resetLabel.zPosition = 1
         addChild(resetLabel)
+        
+        restartLabel.fontSize = 50
+        restartLabel.text = "Restart Level"
+        restartLabel.fontName = "Georgia-Bold"
+        restartLabel.position = CGPoint(x: frame.midX, y: frame.midY)
+        restartLabel.name = "restartLabel"
+        restartLabel.fontColor = color
+        restartLabel.alpha = 0
+        restartLabel.zPosition = 1
+        addChild(restartLabel)
     }
     //detects finger presses
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -282,6 +294,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     if node.name == "resetLabel" {
                         run(SKAction.playSoundFileNamed("buttonClick.wav", waitForCompletion: false))
                         resetLevel()
+                    }
+                }
+                if nextLvl {
+                    if node.name == "restartLabel" {
+                        run(SKAction.playSoundFileNamed("buttonClick.wav", waitForCompletion: false))
+                        restartGame()
                     }
                 }
             }
@@ -361,6 +379,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             setLevel(level: currentLvl, reset: true)
         }
     }
+    //restarts game when get to last level
+    func restartLevel() {
+        if !restartGame {
+            winLabel.alpha = 1
+            restartLabel.alpha = 1
+            restartGame.toggle()
+        } else {
+            winLabel.alpha = 0
+            restartLabel.alpha = 0
+            restartGame.toggle()
+            setLevel(level: 1, reset: true)
+        }
+    }
     //sets level specified number, also resets everything. (clearing all bricks, stopping ball, reseting variables etc.)
     func setLevel(level : Int, reset : Bool /*changes wether or not  bricks positions get reset or not*/) {
         currentLvl = level
@@ -411,12 +442,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 makeBouncyBrick(x: 0, y: 50, canMove: true, rotate: 3)
                 makeBouncyBrick(x: 0, y: -50, canMove: true, rotate: 3)
             }
-            
             return
         default:
             makeBall(y: 0)
             makeTarget(pos: CGPoint(x: 315, y: frame.midY))
             makeBow(y: 0)
+            restartLevel()
         }
         spreadBricks(condition: true)
     }
