@@ -299,7 +299,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if nextLvl {
                     if node.name == "restartLabel" {
                         run(SKAction.playSoundFileNamed("buttonClick.wav", waitForCompletion: false))
-                        restartGame()
+                        restartLevel()
                     }
                 }
             }
