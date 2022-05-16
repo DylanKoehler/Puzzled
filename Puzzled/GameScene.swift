@@ -24,8 +24,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var bkMusic = SKAudioNode()
     var borders = [SKSpriteNode()]
     var tutorial = SKLabelNode()
-    //saves locations of bricks for reset
-    var savedLocations = [SKSpriteNode : CGPoint]()
     var currentLvl = 1
     var nextLvl = false
     var resetLvl = false
@@ -83,12 +81,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             if object.name == "target" {
                 ball.physicsBody?.isDynamic = false
+                run(SKAction.playSoundFileNamed("win.wav", waitForCompletion: false))
                 nextLevel()
-                print("Win")
+                //print("Win")
             }
             for border in borders {
                 if object == border {
                     ball.physicsBody?.isDynamic = false
+                    run(SKAction.playSoundFileNamed("metalHit.wav", waitForCompletion: false))
                     resetLevel()
                 }
             }
@@ -249,6 +249,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     //checks all bouncy and normal bricks if they are being touched by finger
                     for brick in bouncyBricks {
                         if currentBrick == target && brick.name != "noMove" && node == brick {
+                            run(SKAction.playSoundFileNamed("pickUp.wav", waitForCompletion: false))
                             currentBrick = brick
                             //letting current brick use physics so they cant be placed inside other bricks
                             brick.physicsBody?.isDynamic = true
@@ -257,6 +258,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     }
                     for brick in bricks {
                         if currentBrick == target && brick.name != "noMove" && node == brick {
+                            run(SKAction.playSoundFileNamed("pickUp.wav", waitForCompletion: false))
                             currentBrick = brick
                             brick.physicsBody?.isDynamic = true
                             brick.position = location
@@ -272,11 +274,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 //if touching reset or next level labels does the corrisponding action
                 if nextLvl {
                     if node.name == "nextLabel" {
+                        run(SKAction.playSoundFileNamed("buttonClick.wav", waitForCompletion: false))
                         nextLevel()
                     }
                 }
                 if resetLvl {
                     if node.name == "resetLabel" {
+                        run(SKAction.playSoundFileNamed("buttonClick.wav", waitForCompletion: false))
                         resetLevel()
                     }
                 }
