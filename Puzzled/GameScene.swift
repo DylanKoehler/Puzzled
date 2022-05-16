@@ -23,6 +23,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var resetLabel = SKLabelNode()
     var bkMusic = SKAudioNode()
     var borders = [SKSpriteNode()]
+    var tutorial = SKLabelNode()
+    //saves locations of bricks for reset
+    var savedLocations = [SKSpriteNode : CGPoint]()
     var currentLvl = 1
     var nextLvl = false
     var resetLvl = false
@@ -48,7 +51,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         makeBKMusic()
         bkMusic.run(SKAction.play())
         makeLabels(color: .black)
-        setLevel(level: currentLvl)
+        setLevel(level: currentLvl, reset: false)
     }
     //used for collisions
     func didBegin(_ contact: SKPhysicsContact) {
@@ -62,27 +65,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func collisionBetween(ball: SKNode, object: SKNode) {
         //what happens when ball hits target
         if ballShot {
+            for brick in bouncyBricks {
+                if object == brick {
+                    run(SKAction.playSoundFileNamed("boing.mp3", waitForCompletion: false))
+                }
+            }
             for brick in bricks {
                 if object == brick {
-                    ball.physicsBody?.isDynamic = false
-                    print("Lose")
+                    //ball.physicsBody?.isDynamic = false
+                    
+                    if object.name == "noMove" {
+                        run(SKAction.playSoundFileNamed("metalHit.wav", waitForCompletion: false))
+                    } else {
+                        run(SKAction.playSoundFileNamed("woodHit.wav", waitForCompletion: false))
+                    }
                     resetLevel()
                 }
+            }
+            if object.name == "target" {
+                //ball.physicsBody?.isDynamic = false
+                nextLevel()
+                print("Win")
             }
             for border in borders {
                 if object == border {
                     ball.physicsBody?.isDynamic = false
                     resetLevel()
-                }
-            }
-            if object.name == "target" {
-                ball.physicsBody?.isDynamic = false
-                nextLevel()
-                print("Win")
-            }
-            for brick in bouncyBricks {
-                if object == brick {
-                    run(SKAction.playSoundFileNamed("boing.mp3", waitForCompletion: false))
                 }
             }
         }
@@ -137,7 +145,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         target.removeFromParent() //remove target if exists
         let targetPicture = SKTexture(imageNamed: "target")
         target = SKSpriteNode(texture: targetPicture, size: CGSize(width: 75, height: 75))
-        target.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 20, height: 20))
+        target.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 50, height: 50))
         target.position = pos
         target.zPosition = -1
         target.name = "target"
@@ -157,12 +165,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     // helper function used to make each brick
     func makeBrick(x: Int, y: Int, canMove: Bool) {
-        let brickPicture = SKTexture(imageNamed: "brick")
-        let brick = SKSpriteNode(texture: brickPicture, color: canMove ? .red : .black, size: CGSize(width: 75, height: 75))
+        let brickPicture = SKTexture(imageNamed: canMove ? "wood" : "metal")
+        let brick = SKSpriteNode(texture: brickPicture, color: canMove ? .brown : .gray, size: CGSize(width: 75, height: 75))
         brick.position = CGPoint(x: x, y: y)
-        brick.colorBlendFactor = canMove ? 0.7 : 0.5
         brick.physicsBody = SKPhysicsBody(rectangleOf: brick.size)
         brick.physicsBody?.isDynamic = false
+        brick.colorBlendFactor = 0.5
         brick.name = canMove ? "yesMove" : "noMove"
         brick.physicsBody?.affectedByGravity = false
         brick.physicsBody?.allowsRotation = false
@@ -170,7 +178,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bricks.append(brick) //adds to list of bricks so code can keep track of all the different bricks
     }
     //creates bouncy bricks
-    func makeBouncyBrick(x: Int, y: Int, canMove: Bool, type: Int /* -1 means top leans left, 1 means leans right*/ ) {
+    func makeBouncyBrick(x: Int, y: Int, canMove: Bool, rotate: Int /* 0 means flat, 6 means verticle, 3 means 45 leaning right, 9 means 45 leaning left*/ ) {
         let brickPicture = SKTexture(imageNamed: "Bouncy")
         let bouncyBrick = SKSpriteNode(texture: brickPicture, color: canMove ? .magenta : .black, size: CGSize(width: 100, height: 20))
         bouncyBrick.colorBlendFactor = canMove ? 0.3 : 0.7
@@ -180,7 +188,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bouncyBrick.name = canMove ? "yesMove" : "noMove"
         bouncyBrick.physicsBody?.affectedByGravity = false
         bouncyBrick.physicsBody?.allowsRotation = false
-        bouncyBrick.zRotation = 0.8 * CGFloat(type) //sets rectangle to 45 degrees so ball bounces 90 degrees
+        bouncyBrick.zRotation = (CGFloat(rotate) * .pi)/12
         addChild(bouncyBrick)
         bouncyBricks.append(bouncyBrick)
     }
@@ -334,7 +342,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             winLabel.alpha = 0
             nextLabel.alpha = 0
             nextLvl.toggle()
-            setLevel(level: currentLvl + 1)
+            setLevel(level: currentLvl + 1, reset: false)
         }
     }
     //resets level and creates reset level labels
@@ -347,11 +355,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             loseLabel.alpha = 0
             resetLabel.alpha = 0
             resetLvl.toggle()
-            setLevel(level: currentLvl)
+            setLevel(level: currentLvl, reset: true)
         }
     }
     //sets level specified number, also resets everything. (clearing all bricks, stopping ball, reseting variables etc.)
-    func setLevel(level : Int) {
+    func setLevel(level : Int, reset : Bool) {
         currentLvl = level
         ballShot = false
         ball.physicsBody?.isDynamic = false
@@ -361,7 +369,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             makeBall(y: -1)
             //makeTarget(y: -1)
             makeBow(y: -1)
-            makeBouncyBrick(x: 50, y: 50, canMove: true, type: 1)
+            makeBouncyBrick(x: 50, y: 50, canMove: true, rotate: 3)
             makeBrick(x: 100, y: 100, canMove: true)
             makeBrick(x: 0, y: 100, canMove: true)
             makeBrick(x: -100, y: 100, canMove: false)
@@ -375,9 +383,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             makeBow(y: 0)
             makeBall(y: 0)
             makeTarget(pos: CGPoint(x: 315, y: -200))
-            makeBouncyBrick(x: 50, y: 50, canMove: true, type: 1)
-            makeBouncyBrick(x: 100, y: 100, canMove: true, type: -1)
-            makeBouncyBrick(x: 100, y: 50, canMove: true, type: -1)
+            makeBouncyBrick(x: 50, y: 50, canMove: true, rotate: 3)
+            makeBouncyBrick(x: 100, y: 100, canMove: true, rotate: 9)
+            makeBouncyBrick(x: 100, y: 50, canMove: true, rotate: 9)
             makeBrick(x: 300, y: 0, canMove: false)
             makeBrick(x: -375, y: 0, canMove: false)
         case 3:  //level 3
@@ -386,10 +394,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             makeTarget(pos: CGPoint(x: 315, y: 200))
             makeBrick(x: -175, y: 200, canMove: false)
             makeBrick(x: 325, y: 125, canMove: false)
-            makeBouncyBrick(x: 50, y: 0, canMove: true, type: -1)
-            makeBouncyBrick(x: -50, y: 0, canMove: true, type: -1)
-            makeBouncyBrick(x: 0, y: 50, canMove: true, type: 1)
-            makeBouncyBrick(x: 0, y: -50, canMove: true, type: 1)
+            makeBouncyBrick(x: 50, y: 0, canMove: true, rotate: 9)
+            makeBouncyBrick(x: -50, y: 0, canMove: true, rotate: 9)
+            makeBouncyBrick(x: 0, y: 50, canMove: true, rotate: 3)
+            makeBouncyBrick(x: 0, y: -50, canMove: true, rotate: 3)
 
             
             return
@@ -432,7 +440,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bkMusic.removeFromParent()
         bkMusic = SKAudioNode(fileNamed : "background 2")
         bkMusic.isPositional = false
-        bkMusic.run(SKAction.changeVolume(to: 1, duration: 0))
+        bkMusic.run(SKAction.changeVolume(to: 0.5, duration: 0))
         addChild(bkMusic)
     }
     //makes border surrounding the play area
