@@ -72,8 +72,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             for brick in bricks {
                 if object == brick {
-                    //ball.physicsBody?.isDynamic = false
-                    
+                    ball.physicsBody?.isDynamic = false
                     if object.name == "noMove" {
                         run(SKAction.playSoundFileNamed("metalHit.wav", waitForCompletion: false))
                     } else {
@@ -83,7 +82,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
             if object.name == "target" {
-                //ball.physicsBody?.isDynamic = false
+                ball.physicsBody?.isDynamic = false
                 nextLevel()
                 print("Win")
             }
@@ -359,46 +358,55 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     //sets level specified number, also resets everything. (clearing all bricks, stopping ball, reseting variables etc.)
-    func setLevel(level : Int, reset : Bool) {
+    func setLevel(level : Int, reset : Bool /*changes wether or not  bricks positions get reset or not*/) {
         currentLvl = level
         ballShot = false
         ball.physicsBody?.isDynamic = false
-        clearBricks()
+        if !reset {
+            clearBricks()
+        }
         switch currentLvl {
         case 0: //for testing
             makeBall(y: -1)
-            //makeTarget(y: -1)
+            makeTarget(pos: CGPoint(x: 315, y: -200))
             makeBow(y: -1)
-            makeBouncyBrick(x: 50, y: 50, canMove: true, rotate: 3)
-            makeBrick(x: 100, y: 100, canMove: true)
-            makeBrick(x: 0, y: 100, canMove: true)
-            makeBrick(x: -100, y: 100, canMove: false)
+            if !reset {
+                makeBouncyBrick(x: 50, y: 50, canMove: true, rotate: 3)
+                makeBrick(x: 100, y: 100, canMove: true)
+                makeBrick(x: 0, y: 100, canMove: true)
+                makeBrick(x: -100, y: 100, canMove: false)
+            }
         case 1: //level 1
             makeBow(y: 0)
             makeBall(y: 0)
             makeTarget(pos: CGPoint(x: 315, y: frame.midY))
-            makeBrick(x: 0, y: 0, canMove: true)
+            if !reset {
+                makeBrick(x: 0, y: 0, canMove: true)
+            }
             return
         case 2: //level 2
             makeBow(y: 0)
             makeBall(y: 0)
             makeTarget(pos: CGPoint(x: 315, y: -200))
-            makeBouncyBrick(x: 50, y: 50, canMove: true, rotate: 3)
-            makeBouncyBrick(x: 100, y: 100, canMove: true, rotate: 9)
-            makeBouncyBrick(x: 100, y: 50, canMove: true, rotate: 9)
-            makeBrick(x: 300, y: 0, canMove: false)
-            makeBrick(x: -375, y: 0, canMove: false)
+            if !reset {
+                makeBouncyBrick(x: 50, y: 50, canMove: true, rotate: 3)
+                makeBouncyBrick(x: 100, y: 100, canMove: true, rotate: 9)
+                makeBouncyBrick(x: 100, y: 50, canMove: true, rotate: 9)
+                makeBrick(x: 300, y: 0, canMove: false)
+                makeBrick(x: -375, y: 0, canMove: false)
+            }
         case 3:  //level 3
             makeBow(y: 1)
             makeBall(y: 1)
             makeTarget(pos: CGPoint(x: 315, y: 200))
-            makeBrick(x: -175, y: 200, canMove: false)
-            makeBrick(x: 325, y: 125, canMove: false)
-            makeBouncyBrick(x: 50, y: 0, canMove: true, rotate: 9)
-            makeBouncyBrick(x: -50, y: 0, canMove: true, rotate: 9)
-            makeBouncyBrick(x: 0, y: 50, canMove: true, rotate: 3)
-            makeBouncyBrick(x: 0, y: -50, canMove: true, rotate: 3)
-
+            if !reset {
+                makeBrick(x: -175, y: 200, canMove: false)
+                makeBrick(x: 325, y: 125, canMove: false)
+                makeBouncyBrick(x: 50, y: 0, canMove: true, rotate: 9)
+                makeBouncyBrick(x: -50, y: 0, canMove: true, rotate: 9)
+                makeBouncyBrick(x: 0, y: 50, canMove: true, rotate: 3)
+                makeBouncyBrick(x: 0, y: -50, canMove: true, rotate: 3)
+            }
             
             return
         default:
