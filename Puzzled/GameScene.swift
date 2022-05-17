@@ -22,6 +22,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var loseLabel = SKLabelNode()
     var resetLabel = SKLabelNode()
     var restartLabel = SKLabelNode()
+    var tutorialLabel = SKLabelNode()
+    var tutorialState = 0
     var bkMusic = SKAudioNode()
     var borders = [SKSpriteNode()]
     var tutorial = SKLabelNode()
@@ -51,6 +53,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         makeBKMusic()
         bkMusic.run(SKAction.play())
         makeLabels(color: .black)
+        makeTutorial(color: .black)
         setLevel(level: currentLvl, reset: false)
     }
     //used for collisions
@@ -158,11 +161,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     //creates the background
     func createBackground() {
-            let sunset = SKTexture(imageNamed: "sunset")
-            let sunsetBackground = SKSpriteNode(texture: sunset)
-            sunsetBackground.zPosition = -2
-            sunsetBackground.position = CGPoint(x: 0, y: frame.midY)
-            addChild(sunsetBackground)
+        let sunset = SKTexture(imageNamed: "sunset")
+        let sunsetBackground = SKSpriteNode(texture: sunset)
+        sunsetBackground.zPosition = -2
+        sunsetBackground.position = CGPoint(x: 0, y: frame.midY)
+        addChild(sunsetBackground)
     }
     // helper function used to make each brick
     func makeBrick(x: Int, y: Int, canMove: Bool) {
@@ -245,6 +248,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         restartLabel.zPosition = 1
         addChild(restartLabel)
     }
+    func makeTutorial(color : UIColor) {
+        tutorialLabel.fontSize = 50
+        tutorialLabel.text = ""
+        tutorialLabel.fontName = "Georgia-Bold"
+        tutorialLabel.position = CGPoint(x: 0, y: 0)
+        tutorialLabel.name = "restartLabel"
+        tutorialLabel.fontColor = color
+        tutorialLabel.alpha = 0
+        tutorialLabel.zPosition = 1
+        addChild(tutorialLabel)
+    }
+    func updateTutorial() {
+        switch (tutorialState) {
+        case 0: //move brick label
+            tutorialLabel.position = CGPoint(x: 0, y: 100)
+            tutorialLabel.text = "Touch and Drag the wooden brick"
+            tutorialLabel.alpha = 1
+
+        case 1: //shoot ball label
+            tutorialLabel.position = CGPoint(x: 0, y: 100)
+            tutorialLabel.text = "Tap the slingshot"
+            tutorialLabel.alpha = 1
+        case 2: //teaches other bricks
+            tutorialLabel.position = CGPoint(x: 0, y: 100)
+            tutorialLabel.text = "Metal Bricks can't be moved"
+            tutorialLabel.alpha = 1
+        default:
+            tutorialLabel.alpha = 0
+            break
+        }
+    }
     //detects finger presses
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         //makes sure none of the bricks can move on there own
@@ -261,6 +295,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     //checks all bouncy and normal bricks if they are being touched by finger
                     for brick in bouncyBricks {
                         if currentBrick == target && brick.name != "noMove" && node == brick {
+                            if (currentLvl == 2 && tutorialState == 2) {
+                                tutorialLabel.alpha = 0
+                                tutorialState += 1
+                            }
                             run(SKAction.playSoundFileNamed("pickUp.wav", waitForCompletion: false))
                             currentBrick = brick
                             //letting current brick use physics so they cant be placed inside other bricks
@@ -270,6 +308,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     }
                     for brick in bricks {
                         if currentBrick == target && brick.name != "noMove" && node == brick {
+                            if (currentLvl == 1 && tutorialState == 0) {
+                                tutorialLabel.alpha = 0
+                                tutorialState += 1
+                            }
                             run(SKAction.playSoundFileNamed("pickUp.wav", waitForCompletion: false))
                             currentBrick = brick
                             brick.physicsBody?.isDynamic = true
@@ -278,6 +320,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     }
                     //shoots ball if touching the bow
                     if node.name == "bow" {
+                        if (currentLvl == 1 && tutorialState == 1){
+                            tutorialLabel.alpha = 0
+                            tutorialState += 1
+                        }
                         shootBall()
                         ballShot = true
                         
@@ -296,7 +342,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         resetLevel()
                     }
                 }
-                if nextLvl {
+                if restartGame {
                     if node.name == "restartLabel" {
                         run(SKAction.playSoundFileNamed("buttonClick.wav", waitForCompletion: false))
                         restartLevel()
@@ -329,6 +375,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     //for finger release
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        // if released brick on level 1 updates tutorial text
+        if (currentLvl == 1 && tutorialState == 1) {
+            updateTutorial()
+        }
         //teleports bricks moved outside the border back to middle
         if abs(currentBrick.position.y) > 220 || abs(currentBrick.position.x) > frame.maxX{
             currentBrick.position = CGPoint(x: 0, y: 0)
@@ -418,6 +468,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if !reset {
                 makeBrick(x: 0, y: 0, canMove: true)
             }
+            if tutorialState == 0 {
+                updateTutorial()
+            }
             return
         case 2: //level 2
             makeBow(y: 0)
@@ -429,6 +482,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 makeBouncyBrick(x: 100, y: 50, canMove: true, rotate: 9)
                 makeBrick(x: 300, y: 0, canMove: false)
                 makeBrick(x: -375, y: 0, canMove: false)
+            }
+            if tutorialState == 2 {
+                updateTutorial()
             }
         case 3:  //level 3
             makeBow(y: 1)
@@ -469,17 +525,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //background musjc
     func makeBKMusic(){
         //credits:
-//        Endless Summer by Luke Bergs | https://soundcloud.com/bergscloud/
-//        Music promoted by https://www.chosic.com/free-music/all/
-//        Creative Commons CC BY-SA 3.0
-//        https://creativecommons.org/licenses/by-sa/3.0/
-//        Tropical Soul by Luke Bergs | https://soundcloud.com/bergscloud/
-//        Music promoted by https://www.chosic.com/free-music/all/
-//        Creative Commons CC BY-SA 3.0
-//        https://creativecommons.org/licenses/by-sa/3.0/
-//        Downtown Glow by Ghostrifter & Devyzed
-//        Creative Commons — Attribution-NoDerivs 3.0 Unported — CC BY-ND 3.0
-//        Music promoted by https://www.chosic.com/free-music/all/
+        //        Endless Summer by Luke Bergs | https://soundcloud.com/bergscloud/
+        //        Music promoted by https://www.chosic.com/free-music/all/
+        //        Creative Commons CC BY-SA 3.0
+        //        https://creativecommons.org/licenses/by-sa/3.0/
+        //        Tropical Soul by Luke Bergs | https://soundcloud.com/bergscloud/
+        //        Music promoted by https://www.chosic.com/free-music/all/
+        //        Creative Commons CC BY-SA 3.0
+        //        https://creativecommons.org/licenses/by-sa/3.0/
+        //        Downtown Glow by Ghostrifter & Devyzed
+        //        Creative Commons — Attribution-NoDerivs 3.0 Unported — CC BY-ND 3.0
+        //        Music promoted by https://www.chosic.com/free-music/all/
         bkMusic.removeFromParent()
         bkMusic = SKAudioNode(fileNamed : "background 2")
         bkMusic.isPositional = false
