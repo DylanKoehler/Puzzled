@@ -263,11 +263,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         switch (tutorialState) {
         case 0: //move brick label
             tutorialLabel.position = CGPoint(x: 0, y: 100)
+            tutorialLabel.fontSize = 40
             tutorialLabel.text = "Touch and Drag the wooden brick"
             tutorialLabel.alpha = 1
 
         case 1: //shoot ball label
             tutorialLabel.position = CGPoint(x: 0, y: 100)
+            tutorialLabel.fontSize = 50
             tutorialLabel.text = "Tap the slingshot"
             tutorialLabel.alpha = 1
         case 2: //teaches other bricks
@@ -439,7 +441,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             winLabel.alpha = 0
             restartLabel.alpha = 0
             restartGame.toggle()
-            setLevel(level: 1, reset: true)
+            setLevel(level: 1, reset: false)
         }
     }
     //sets level specified number, also resets everything. (clearing all bricks, stopping ball, reseting variables etc.)
@@ -500,9 +502,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             return
         default:
-            makeBall(y: 0)
-            makeTarget(pos: CGPoint(x: 315, y: frame.midY))
-            makeBow(y: 0)
+//            makeBall(y: 0)
+//            makeTarget(pos: CGPoint(x: 315, y: frame.midY))
+//            makeBow(y: 0)
+            tutorialState = 0
             restartLevel()
         }
         spreadBricks(condition: true)
@@ -537,7 +540,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //        Creative Commons — Attribution-NoDerivs 3.0 Unported — CC BY-ND 3.0
         //        Music promoted by https://www.chosic.com/free-music/all/
         bkMusic.removeFromParent()
-        bkMusic = SKAudioNode(fileNamed : "background 2")
+        bkMusic = SKAudioNode(fileNamed : "background 1")
         bkMusic.isPositional = false
         bkMusic.run(SKAction.changeVolume(to: 0.5, duration: 0))
         addChild(bkMusic)
