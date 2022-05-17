@@ -266,7 +266,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             tutorialLabel.fontSize = 40
             tutorialLabel.text = "Touch and Drag the wooden brick"
             tutorialLabel.alpha = 1
-
+            
         case 1: //shoot ball label
             tutorialLabel.position = CGPoint(x: 0, y: 100)
             tutorialLabel.fontSize = 50
@@ -500,11 +500,33 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 makeBouncyBrick(x: 0, y: 50, canMove: true, rotate: 3)
                 makeBouncyBrick(x: 0, y: -50, canMove: true, rotate: 3)
             }
-            return
+        case 4: //level 4
+            makeBow(y: 1)
+            makeBall(y: 1)
+            makeTarget(pos: CGPoint(x: 315, y: 0))
+            if !reset {
+                makeBrick(x: 325, y: 80, canMove: false)
+                makeBrick(x: 325, y: -80, canMove: false)
+                makeBrick(x: 0, y: 200, canMove: false)
+                makeBrick(x: 300, y: 155, canMove: false)
+                makeBouncyBrick(x: -300, y: 0, canMove: true, rotate: -3)
+                makeBouncyBrick(x: -325, y: -200, canMove: true, rotate: -3)
+                makeBouncyBrick(x: 0, y: 120, canMove: false, rotate: -3)
+                makeBouncyBrick(x: 240, y: -11, canMove: false, rotate: -3)
+                makeBouncyBrick(x: 175, y: 55, canMove: false, rotate: -3)
+                makeBouncyBrick(x: -100, y: 0, canMove: true, rotate: -3)
+                makeBouncyBrick(x: -175, y: 0, canMove: true, rotate: -3)
+                makeBouncyBrick(x: -175, y: -175, canMove: true, rotate: 3)
+                makeBouncyBrick(x: 75, y: -200, canMove: false, rotate: -3)
+                makeBouncyBrick(x: 175, y: -200, canMove: false, rotate: 3)
+                //makeBrick(x: 0, y: 0, canMove: true)
+                //makeBrick(x: 0, y: 1, canMove: true)
+                //makeBrick(x: 0, y: -1, canMove: true)
+            }
         default:
-//            makeBall(y: 0)
-//            makeTarget(pos: CGPoint(x: 315, y: frame.midY))
-//            makeBow(y: 0)
+            //            makeBall(y: 0)
+            //            makeTarget(pos: CGPoint(x: 315, y: frame.midY))
+            //            makeBow(y: 0)
             tutorialState = 0
             restartLevel()
         }
